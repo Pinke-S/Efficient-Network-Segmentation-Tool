@@ -16,32 +16,29 @@
 
     <label for="ipInput_id">ISP IP</label> <input type="text" placeholder="Input IP and its prefix" id="ipInput_id">
 
-    <fieldset class="subnetEntry_class">
-      <legend>Subnets <input type="button" value="Add Subnet"></legend>
+    <fieldset class="subnetEntries_class">
+      <legend>Subnets <input type="button" value="Add Subnet" id="addSubnetButton_id"> </legend>
 
-      <fieldset class="subnetEntryNetworks_class">
-        <legend>
-          <input type="text" value="HQ" class="subnetEntryCategory_class">
-          <input type="number" name="Condidence" value="100" max="100" min="0" class="subnetEntryCategory_class">
+      <fieldset id="subnetEnrtryN0_id">
+        <legend id="subnetEntryHeader_id">
+          <input type="text" value="HQ">
+          <input type="number" name="Condidence" value="100" max="100" min="0">
         </legend>
         <table>
           <tr>
             <th>Name</th>
             <th>Size</th>
           </tr>
-          <tr class="subnetEntryNetworksEntry_class">
+          <tr>
             <td> <input type="text" name="" value="Staff"></td>
             <td><input type="number" name="" value="256"></td>
           </tr>
-          <tr class="subnetEntryNetworksEntry_class">
+          <tr>
             <td> <input type="text" name="" value="Guest"></td>
             <td><input type="number" name="" value="64"></td>
           </tr>
-          <tr>
-            <td> <input type="button" value="Add Network"></td>
-          </tr>
         </table>
-
+        <input type="button" value="Add Network">
 
 
       </fieldset>
