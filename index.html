@@ -3,10 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <script type="module" src="main.js"></script>
+
   <title>Efficient Network Segmentation Tool</title>
 </head>
 
 <body>
+
+  <form>
+
+    <label for="ipInput_id"></label><input type="text" placeholder="Input IP and its prefix" id="ipInput_id">
+
+    <fieldset class="subnetEntry_class">
+      <legend>Subnets</legend>
+      <label for="subnetEntryCategory_class">Groupping </label>
+      <input type="text" value="HQ" class="subnetEntryCategory_class">
+      <input type="number" name="Condidence" max="100" min="0" class="subnetEntryCategory_class">
+
+      <fieldset class="subnetEntryNetworks_class">
+        <legend>Networks</legend>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Size</th>
+          </tr>
+          <tr class="subnetEntryNetworksEntry_class">
+            <td> <input type="text" name=""></td>
+            <td><input type="number" name=""></td>
+
+          </tr>
+        </table>
+
+      </fieldset>
+
+
+    </fieldset>
+  </form>
 
 </body>
 
