@@ -1,21 +1,22 @@
-let subnetgrouping =
+let subnet =
 {
-
+  name: "HQ",
+  confidence: 100,
 
   table: {
     tableEntries: [{
       networkName: "Staff",
-      networkSie: 256
+      networkSize: 256
     },
     {
       networkName: "Guest",
-      networkSie: 64
+      networkSize: 64
     }],
 
     initEventListeners() {
     },
 
-    drawTableAfter() {
+    drawTableAfter(element) {
 
       this.initEventListeners();
     }
