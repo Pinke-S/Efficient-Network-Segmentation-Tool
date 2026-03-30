@@ -9,7 +9,6 @@ const htmlClasses = {
   subnetEntries: "subnetEntries_class",
 }
 
-let subnetidCount = 1; //! ALWAYS INCREMENT TO PRVENENT OVERLAP
 
 let subnets = [
   { name: "HQ", confidence: 100, id: "subnetEnrtryN0_id", networks: [{ name: "Staff", size: 256 }, { name: "Guest", size: 64 }] }
@@ -27,6 +26,8 @@ function createSubnetField(subnet) {
 
   return field;
 }
+
+let subnetidCount = 1; //! ALWAYS INCREMENT TO PRVENENT OVERLAP
 
 function addSubnet() {
   let subnet = { name: "", confidence: 100, id: `subnetEnrtryN${subnetidCount}_id`, networks: [] };
