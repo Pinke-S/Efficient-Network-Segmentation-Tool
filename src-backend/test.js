@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { ipAddress } from 'p2vlsm';
+import { ipAddress } from 'p2nsa';
 
 // test("name", ()=>{
 // Arrange
