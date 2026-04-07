@@ -4,6 +4,8 @@
 
 
 /*
+* ISP IP Addres string
+* - ISP Ip Address as string
 * Subnet object
 * - Navn
 * - User size
