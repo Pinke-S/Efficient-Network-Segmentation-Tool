@@ -6,8 +6,10 @@
   "author": "cs-26-dat-2-03",
   "type": "module",
   "exports": {
-    ".": "./ipaddress.js",
-    ".": "./main.js"
+    ".": [
+      "./ipaddress.js",
+      "./main.js"
+    ]
   },
   "scripts": {
     "test": "node test.js"
