@@ -7,6 +7,8 @@
 //TODO Alogrithm
 
 /*
+* IP Addres string
+* (+) Ip Address as string
 * Subnet object
 * (+) Navn
 * (+) User size
