@@ -1,10 +1,10 @@
-import {getNextPowerOfTwo, getPowerOfTwoToPrefix} from "./network";
+import {getNextPowerOfTwo, getPrefixFromHosts} from "./network";
 
 function Subnet(name, host){
     this.name = name;
     this.hostRequirement = host;
     this.nextPowerOfTwo = getNextPowerOfTwo(host);
-    this.prefix = getPowerOfTwoToPrefix(host);
+    this.prefix = getPrefixFromHosts(host);
 
 }
 
