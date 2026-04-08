@@ -1,17 +1,14 @@
-import {getNextPowerOfTwo, getPrefixFromHosts} from "./network";
+ import {getNextPowerOfTwo, getPrefixFromBlockSize} from "./network.js";
 
-function Subnet(name, host){
-    this.name = name;
-    this.hostRequirement = host;
-    this.nextPowerOfTwo = getNextPowerOfTwo(host);
-    this.prefix = getPrefixFromHosts(host);
+     export function Subnet(name, host){
+        this.name = name;
+        this.hostRequirement = host;
+        this.nextPowerOfTwo = getNextPowerOfTwo(host);
+        this.prefix = getPrefixFromBlockSize(this.nextPowerOfTwo);
 
-}
+     }
 
-function parseForm(power){
-
-    // skal kun køre, hvis data er valideret
-    function getFormRows(form) {
+    export function getFormRows(form) {
         const rows = form.querySelectorAll(".row");
         const objArr = [];
 
@@ -24,4 +21,10 @@ function parseForm(power){
 
         return objArr;
     }
-}
+
+    export function sortSubnets(subnets) {
+        subnets.sort((a, b) => b.nextPowerOfTwo - a.nextPowerOfTwo);
+    }
+
+
+

@@ -8,7 +8,7 @@ export function getPrefix(ipAddress) {
     return Number(parts[1]);
 }
 
-export function getPrefixFromHosts(hosts) {
+export function getPrefixFromBlockSize(hosts) {
     return IPV4_BITS - Math.ceil(Math.log2(hosts));
 }
 
