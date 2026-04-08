@@ -1,3 +1,10 @@
+import {
+    getPrefix,
+    getTotalAdresses,
+    getNextPowerOfTwo, getPowerOfTwoToPrefix
+} from "./network.js";
+
+
 //TODO Design Overhaul
 //TODO Collect Data
 //TODO Interactive
@@ -15,3 +22,6 @@
 * (+) IP Address Range
 * (+) Broadcast and network address
 */
+
+getNextPowerOfTwo(77);
+getPowerOfTwoToPrefix(77);
