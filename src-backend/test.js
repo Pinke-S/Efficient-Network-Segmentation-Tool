@@ -3,6 +3,8 @@ import { test } from 'node:test';
 
 import { ipAddress } from 'p2nsa';
 
+
+
 // test("name", ()=>{
 // Arrange
 // Act
@@ -66,4 +68,94 @@ test("IP to string", () => {
 
   // Assert
   assert.equal(ip.ipAddressToString(), str);
+});
+
+test("Network IP 01", () => {
+
+  // Arrange
+  const str = "192.168.1.55/22";
+  const expected = "192.168.0.0/22";
+  let ip = new ipAddress();
+
+  // act
+  ip.ipAddressFromString(str);
+  let networkAddress = ip.getNetworkAddress();
+
+  // Assert
+  assert.equal(networkAddress, expected);
+});
+
+test("Network IP 02", () => {
+
+  // Arrange
+  const str = "192.168.1.55/16";
+  const expected = "192.168.0.0/16";
+  let ip = new ipAddress();
+
+  // act
+  ip.ipAddressFromString(str);
+  let networkAddress = ip.getNetworkAddress();
+
+  // Assert
+  assert.equal(networkAddress, expected);
+});
+
+test("Network IP 03", () => {
+
+  // Arrange
+  const str = "192.168.1.55/20";
+  const expected = "192.168.0.0/20";
+  let ip = new ipAddress();
+
+  // act
+  ip.ipAddressFromString(str);
+  let networkAddress = ip.getNetworkAddress();
+
+  // Assert
+  assert.equal(networkAddress, expected);
+});
+
+test("Broadcast IP 01", () => {
+
+  // Arrange
+  const str = "192.168.1.55/22";
+  const expected = "192.168.3.255/22";
+  let ip = new ipAddress();
+
+  // act
+  ip.ipAddressFromString(str);
+  let broadcastAddress = ip.getBroadcastAddress();
+
+  // Assert
+  assert.equal(broadcastAddress, expected);
+});
+
+test("Broadcast IP 02", () => {
+
+  // Arrange
+  const str = "192.168.1.55/16";
+  const expected = "192.168.255.255/16";
+  let ip = new ipAddress();
+
+  // act
+  ip.ipAddressFromString(str);
+  let broadcastAddress = ip.getBroadcastAddress();
+
+  // Assert
+  assert.equal(broadcastAddress, expected);
+});
+
+test("Broadcast IP 03", () => {
+
+  // Arrange
+  const str = "192.168.1.55/20";
+  const expected = "192.168.15.255/20";
+  let ip = new ipAddress();
+
+  // act
+  ip.ipAddressFromString(str);
+  let broadcastAddress = ip.getBroadcastAddress();
+
+  // Assert
+  assert.equal(broadcastAddress, expected);
 });
