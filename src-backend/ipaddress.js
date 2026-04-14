@@ -2,7 +2,17 @@ import { verbose } from "./Util.js";
 
 export class ipAddress {
 
-  constructor() { this.ipStr = ""; this.octetsArray = undefined, this.prefix = 0; }
+  constructor() { this.octetsArray = undefined, this.prefix = 0; this.subnets = null }
+
+  ipAddressFromArray(arr, prefix) {
+    if (arr.length !== 4)
+      throw new Error(`Invalid IP ${arr}`);
+    this.octetsArray = Uint8Array(arr);
+
+    if (prefix < 0 || prefix > 32 || isNaN(prefix))
+      throw new Error(`CIDR can range from 0 to 32, the ip as a CIDR of ${prefix}`);
+    this.prefix = prefix;
+  }
 
   ipAddressFromString(str) {
     let elements = str.split("/")
@@ -62,8 +72,8 @@ export class ipAddress {
     for (let index = Math.ceil(this.prefix / 8); index < networkAddress.length; index++)
       networkAddress[index] = 0;
 
-    // console.log(networkAddress);
-    // console.log(networkAddress.toString());
+    // verbose.log(networkAddress);
+    // verbose.log(networkAddress.toString());
     return `${networkAddress[0]}.${networkAddress[1]}.${networkAddress[2]}.${networkAddress[3]}/${this.prefix}`;
 
   }
@@ -81,8 +91,8 @@ export class ipAddress {
     for (let index = Math.ceil(this.prefix / 8); index < broadcastAddress.length; index++)
       broadcastAddress[index] = 255;
 
-    // console.log(broadcastAddress);
-    // console.log(broadcastAddress.toString());
+    // verbose.log(broadcastAddress);
+    // verbose.log(broadcastAddress.toString());
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
   }
 
