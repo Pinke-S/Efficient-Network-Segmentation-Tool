@@ -2,14 +2,14 @@ import {
     getPrefix,
     getTotalAdresses,
     getNextPowerOfTwo, getPrefixFromBlockSize
-} from "./network.js";
+} from "src/Utils/network.js";
 
 import {
     Subnet,
     getFormRows,
     sortSubnets
 
-} from "./parsing.js";
+} from "src/Subnet/parsing";
 
 
 //TODO Design Overhaul
@@ -29,6 +29,8 @@ import {
 * (+) IP Address Range
 * (+) Broadcast and network address
 */
+
+// Pipeline : HTML Form -> Input Validering -> Parse Subnets -> Sortere Subnets -> Allokere Subnets
 
 //primitiv test
 let arr = [];

@@ -1,4 +1,4 @@
-import {getNextPowerOfTwo, getPrefixFromBlockSize} from "./network.js";
+import { getNextPowerOfTwo, getPrefixFromBlockSize } from "../utils/network.js";
      //constructor til subnets,
      export function Subnet(name, host){
         this.name = name; // navn hentet fra form
