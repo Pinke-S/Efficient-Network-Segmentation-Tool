@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { isPromise } from 'node:util/types';
 
 import { ipAddress } from 'p2nsa';
 
@@ -158,4 +159,35 @@ test("Broadcast IP 03", () => {
 
   // Assert
   assert.equal(broadcastAddress, expected);
+});
+
+test("Sort subnets by prefix", () => {
+
+  // Arrange
+  let isp = new ipAddress();
+  let ips = [new ipAddress(), new ipAddress(), new ipAddress(), new ipAddress()];
+  const sortedPrefix = [25, 26, 27, 28];
+
+  // act
+  isp.ipAddressFromArray([192, 168, 1, 1], 20);
+  ips[0].ipAddressFromArray([192, 168, 1, 1], 27);
+  ips[1].ipAddressFromArray([192, 168, 1, 1], 25);
+  ips[2].ipAddressFromArray([192, 168, 1, 1], 26);
+  ips[3].ipAddressFromArray([192, 168, 1, 1], 28);
+
+  isp.addSubnets(ips);
+
+
+  isp.sortSubnets();
+
+
+  // Assert
+  let success = true;
+
+  for (let i = 0; i < ips.length; i++) {
+    if (isp.subnets[i].prefix !== sortedPrefix[i])
+      success = false;
+  }
+
+  assert.equal(success, true);
 });

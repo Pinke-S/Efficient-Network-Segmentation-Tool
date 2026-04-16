@@ -2,12 +2,19 @@ import { verbose } from "./Util.js";
 
 export class ipAddress {
 
-  constructor() { this.octetsArray = undefined, this.prefix = 0; this.subnets = null }
+  constructor() { this.name = "", this.octetsArray = undefined, this.prefix = 0; this.subnets = [] }
+
+  copyIp(ipToCopy) {
+    this.name = new String(ipToCopy.String);
+    this.octetsArray = new Uint8Array(ipToCopy.octetsArray);
+    this.prefix = ipToCopy.prefix;
+    this.subnets = new Array(ipToCopy.subnet);
+  }
 
   ipAddressFromArray(arr, prefix) {
     if (arr.length !== 4)
       throw new Error(`Invalid IP ${arr}`);
-    this.octetsArray = Uint8Array(arr);
+    this.octetsArray = new Uint8Array(arr);
 
     if (prefix < 0 || prefix > 32 || isNaN(prefix))
       throw new Error(`CIDR can range from 0 to 32, the ip as a CIDR of ${prefix}`);
@@ -47,13 +54,16 @@ export class ipAddress {
       // Subnet mask
 
     }
-
   }
 
   ipAddressToString() {
     if (!this.octetsArray && this.octetsArray.length !== 4)
       throw new Error("Array is undefined or Elements are missing in the array");
     return `${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`;
+  }
+
+  setIpName(name) {
+    this.name = new String(name);
   }
 
   getTotalAvailableHosts() {
@@ -72,12 +82,9 @@ export class ipAddress {
     for (let index = Math.ceil(this.prefix / 8); index < networkAddress.length; index++)
       networkAddress[index] = 0;
 
-    // verbose.log(networkAddress);
-    // verbose.log(networkAddress.toString());
     return `${networkAddress[0]}.${networkAddress[1]}.${networkAddress[2]}.${networkAddress[3]}/${this.prefix}`;
 
   }
-
 
   // Last ip
   getBroadcastAddress() {
@@ -91,9 +98,26 @@ export class ipAddress {
     for (let index = Math.ceil(this.prefix / 8); index < broadcastAddress.length; index++)
       broadcastAddress[index] = 255;
 
-    // verbose.log(broadcastAddress);
-    // verbose.log(broadcastAddress.toString());
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
+  }
+
+  sortSubnets(cmpfunc) {
+    if (!cmpfunc) {
+      this.subnets.sort((a, b) => { return a.prefix - b.prefix })
+    }
+    else
+      this.subnets.sort(cmpfunc);
+  }
+
+  addSubnet(subnet) {
+    this.subnets.push(new ipAddress());
+    this.subnets[this.subnets.length - 1].copyIp(subnet);
+  }
+
+  addSubnets(subnetarr) {
+    subnetarr.forEach(element => {
+      this.addSubnet(element);
+    });
   }
 
 }
