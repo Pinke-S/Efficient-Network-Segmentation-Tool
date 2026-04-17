@@ -9,7 +9,8 @@
     ".": [
       "./ipaddress.js",
       "./Util.js",
-      "./main.js"
+      "./main.js",
+      "./PAA.js"
     ]
   },
   "scripts": {
