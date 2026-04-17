@@ -1,4 +1,4 @@
-import { verbose } from "./Util.js";
+import { verbose } from "p2nsa";
 
 
 /*

@@ -1,4 +1,4 @@
-import { ipAddress } from "./ipaddress.js";
+import { ipAddress } from "../IP/ipaddress.js";
 
 export function allocateSubnets(isp) {
   let unallocated = isp.subnets;

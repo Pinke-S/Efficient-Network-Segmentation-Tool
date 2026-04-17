@@ -2,14 +2,14 @@ import {
     getPrefix,
     getTotalAdresses,
     getNextPowerOfTwo, getPrefixFromBlockSize
-} from "src/Utils/network.js";
+} from "./src/Utils/network.js";
 
 import {
     Subnet,
     getFormRows,
     sortSubnets
 
-} from "src/Subnet/parsing";
+} from "./src/Subnet/parsing.js";
 
 
 //TODO Design Overhaul
