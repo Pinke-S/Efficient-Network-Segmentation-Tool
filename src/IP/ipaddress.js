@@ -74,16 +74,6 @@ export class ipAddress {
     return `${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`;
   }
 
-  // Set the name of the ip, incase there is a name;
-  setIpName(name) {
-    this.name = new String(name);
-  }
-
-  // gets the total amount of usable hosts
-  getTotalAvailableHosts() {
-    return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
-  }
-
   // First ip
   getNetworkAddress() {
     if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
@@ -119,27 +109,5 @@ export class ipAddress {
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
   }
 
-  // Sort the subnets from lowest prefix first to the highst, by default
-  sortSubnets(cmpfunc) {
-    if (!cmpfunc) {
-      this.subnets.sort((a, b) => { return a.prefix - b.prefix })
-    }
-    else
-      this.subnets.sort(cmpfunc);
-  }
-
-  // Add a singular subnet
-  addSubnet(subnet) {
-    this.subnets.push(new ipAddress());
-    this.subnets[this.subnets.length - 1].copyIp(subnet);
-  }
-
-
-  // Adds an array of subnets
-  addSubnets(subnetarr) {
-    subnetarr.forEach(element => {
-      this.addSubnet(element);
-    });
-  }
 
 }
