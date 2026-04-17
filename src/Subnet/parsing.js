@@ -11,19 +11,19 @@ import { getNextPowerOfTwo, getPrefixFromBlockSize } from "../utils/network.js";
      //funktion til at læse værdier på HTML form (den skal ændres alt efter hvordan front end ser ud)
     export function getFormRows(form) {
         const rows = form.querySelectorAll(".row");
-        const objArr = [];
+        const allocationRequest = [];
 
         rows.forEach(row => {
             const subnet_name = row.querySelector('[name="subnet"]').value;
             const hosts = Number(row.querySelector('[name="hosts"]').value);
 
-            objArr.push(new Subnet(subnet_name, hosts));
+            allocationRequest.push(new Subnet(subnet_name, hosts));
         });
 
-        return objArr;
+        return allocationRequest;
     }
 
-    export function sortSubnets(subnets) {
+    export function sortAllocationRequest(subnets) {
          //sortere subnets i descending order
         subnets.sort((a, b) => b.nextPowerOfTwo - a.nextPowerOfTwo);
     }

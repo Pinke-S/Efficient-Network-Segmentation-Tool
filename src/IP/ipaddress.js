@@ -109,5 +109,4 @@ export class ipAddress {
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
   }
 
-
 }
