@@ -10,7 +10,7 @@ import { getNextPowerOfTwo, getPrefixFromBlockSize } from "../utils/network.js";
 
      //funktion til at læse værdier på HTML form (den skal ændres alt efter hvordan front end ser ud)
     export function getFormRows(form) {
-        const rows = form.querySelectorAll(".row");
+        const rows = form.querySelectorAll(".subnetRow");
         const objArr = [];
 
         rows.forEach(row => {

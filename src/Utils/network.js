@@ -19,4 +19,4 @@ export function getTotalAdresses(prefix) {
 export function getNextPowerOfTwo(hostRequirement) {
     const requestedAddresses = hostRequirement + 2;
     return BINARY_BASE ** Math.ceil(Math.log2(requestedAddresses));
-}
+} 

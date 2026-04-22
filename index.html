@@ -1,39 +1,56 @@
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css" />
+    <script type="module" src="main.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="main.css">
-  <script type="module" src="main.js"></script>
+    <title>Efficient Network Segmentation Tool</title>
+  </head>
 
-  <title>Efficient Network Segmentation Tool</title>
-</head>
+  <body>
+    <form id="subnetForm">
+      <h2>Network Segmentation Tool</h2>
 
-<body>
+      <!-- ISP INPUT -->
+      <label for="ipInput_id">ISP Network</label>
+      <input type="text" id="ipInput_id" placeholder="192.168.1.0/24" />
 
-  <form>
-
-    <label for="ipInput_id">ISP IP</label> <input type="text" placeholder="Input IP and its prefix" id="ipInput_id">
-
-    <fieldset class="subnetEntries_class">
-      <legend>Subnets <input type="button" value="Add Subnet" id="addSubnetButton_id"> </legend>
-
-      <fieldset id="subnetEnrtryN0_id">
-        <legend id="subnetEntryHeader_id">
-          <input type="text" value="HQ">
-          <input type="number" name="Condidence" value="100" max="100" min="0">
+      <!-- CREATE SUBNETS -->
+      <fieldset class="subnetEntries_class">
+        <legend>
+          Subnets
+          <input type="button" value="+ Add" id="addSubnetButton_id" />
         </legend>
 
+        <!-- SUBNET -->
+        <div class="subnetBlock">
+          <label>Name</label>
+          <label>Hosts</label>
 
+          <div class="subnetRow">
+            <input type="text" name="subnet" placeholder="HQ" />
+            <input type="number" name="hosts" placeholder="50" min="1" />
+            <button type="button" class="removeBtn">✕</button>
+          </div>
+        </div>
       </fieldset>
 
+      <input type="submit" value="Calculate" id="subnetApplyButton_id" />
+    </form>
+    <div id="visualization"></div>
+    <div id="modalOverlay" class="hidden">
+      <div id="modal">
+        <h3 id="modalTitle">Subnet Info</h3>
 
-    </fieldset>
+        <p><strong>Network:</strong> <span id="modalNetwork"></span></p>
+        <p><strong>Broadcast:</strong> <span id="modalBroadcast"></span></p>
+        <p><strong>Prefix:</strong> <span id="modalPrefix"></span></p>
 
-    <input type="submit" value="Apply" id="subnetApplyButton_id">
-  </form>
-
-</body>
-
+        <button id="closeModalBtn">Close</button>
+      </div>
+    </div>
+  </body>
 </html>
