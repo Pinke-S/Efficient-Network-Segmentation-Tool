@@ -1,0 +1,19 @@
+{
+  "name": "p2nsa",
+  "version": "1.0.0",
+  "description": "Network Segmentation Algorithm for a P2 project",
+  "license": "ISC",
+  "author": "cs-26-dat-2-03",
+  "type": "module",
+  "exports": {
+    ".": [
+      "./ipaddress.js",
+      "./Util.js",
+      "./main.js",
+      "./PAA.js"
+    ]
+  },
+  "scripts": {
+    "test": "node test.js"
+  }
+}
