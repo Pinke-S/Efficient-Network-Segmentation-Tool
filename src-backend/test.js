@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { isPromise } from 'node:util/types';
 
-import { ipAddress } from 'p2nsa';
+// import { ipAddress, allocateSubnets } from 'p2nsa';
+import { ipAddress } from 'p2nsa/ipAddresse'
+import { allocateSubnets } from 'p2nsa/allocation'
+
+
 
 
 
@@ -191,3 +195,175 @@ test("Sort subnets by prefix", () => {
 
   assert.equal(success, true);
 });
+
+
+test("allocation 01", () => {
+  // Arange
+  let ip = new ipAddress();
+  ip.ipAddressFromString("192.168.10.0/24");
+  let subnets = [new ipAddress(), new ipAddress(), new ipAddress(), new ipAddress()]
+
+  subnets[0].prefix = 26;
+  subnets[1].prefix = 26;
+  subnets[2].prefix = 26;
+  subnets[3].prefix = 26;
+
+  ip.addSubnets(subnets);
+  ip.sortSubnets();
+
+  // Act & assert
+  let networks;
+  assert.throws(() => { networks = allocateSubnets(ip) });
+})
+
+test("allocation 02", () => {
+  // Arange
+  let ip = new ipAddress();
+  ip.ipAddressFromString("192.168.1.0/24");
+  let subnets = [new ipAddress(), new ipAddress(), new ipAddress()]
+
+  subnets[0].prefix = 25;
+  subnets[1].prefix = 26;
+  subnets[2].prefix = 26;
+
+  ip.addSubnets(subnets);
+  ip.sortSubnets();
+
+  // Act & assert
+  let networks;
+  assert.doesNotThrow(() => { networks = allocateSubnets(ip) });
+
+  // * output
+  //   192.168.1.128 / 26
+  //   192.168.1.192 / 26
+  //   192.168.1.0 / 25
+})
+
+
+
+
+/*
+  * input
+192.168.1.0 / 24
+  / 26
+  / 25
+  / 26
+
+  * output
+192.168.1.128 / 26
+192.168.1.192 / 26
+192.168.1.0 / 25
+
+
+
+  * input
+192.168.10.0 / 23
+  / 24
+  / 25
+  / 25
+
+  * output
+192.168.11.0 / 25
+192.168.11.128 / 25
+192.168.10.0 / 24
+
+
+
+  * input
+10.0.0.0 / 24
+  / 26
+  / 26
+  / 26
+  / 26
+
+  * output
+10.0.0.0 / 26
+10.0.0.64 / 26
+10.0.0.128 / 26
+10.0.0.192 / 26
+
+
+
+  * input
+172.16.0.0 / 24
+  / 25
+  / 27
+  / 27
+  / 26
+
+
+  * output
+172.16.0.192 / 27
+172.16.0.224 / 27
+172.16.0.128 / 26
+172.16.0.0 / 25
+
+!Down is cases that should fail
+  * input
+192.168.1.0 / 25
+  / 26
+  / 26
+  / 26
+
+  * output
+ERROR
+
+
+
+  * input
+192.168.1.0 / 24
+  / 26
+  / 25
+  / 25
+
+  * output
+ERROR
+
+
+
+  * input
+192.168.1.0 / 24
+  / 23
+  / 26
+
+  * output
+ERROR
+
+
+
+  * input
+192.168.1.0 / 24
+  / 25
+  / 26
+  / 27
+  / 27
+
+  * output
+ERROR
+
+
+
+  * input
+10.0.0.0 / 24
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+
+
+  * output
+ERROR
+  */

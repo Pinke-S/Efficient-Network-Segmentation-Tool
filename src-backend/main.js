@@ -1,3 +1,24 @@
+import { ipAddress } from "./ipaddress.js";
+import { allocateSubnets } from "./PAA.js";
+
+
+// Arange
+let ip = new ipAddress();
+ip.ipAddressFromString("192.168.1.0/24");
+let subnets = [new ipAddress(), new ipAddress(), new ipAddress()]
+
+subnets[0].prefix = 25;
+subnets[1].prefix = 26;
+subnets[2].prefix = 26;
+
+ip.addSubnets(subnets);
+ip.sortSubnets();
+
+// Act & assert
+let networks;
+networks = allocateSubnets(ip);
+
+console.log(networks);
 
 //TODO Santize @B
 //TODO Get Total host possible @L

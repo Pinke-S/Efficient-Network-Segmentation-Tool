@@ -6,10 +6,10 @@
   "author": "cs-26-dat-2-03",
   "type": "module",
   "exports": {
-    ".": [
-      "./ipaddress.js",
-      "./Util.js",
-      "./main.js",
+    "./ipAddresse": [
+      "./ipaddress.js"
+    ],
+    "./allocation": [
       "./PAA.js"
     ]
   },

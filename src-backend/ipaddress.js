@@ -73,19 +73,24 @@ export class ipAddress {
     // Prints string with template literal string
     return `${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`;
   }
+  ipAddressToBinaryString() {
+    if (!this.octetsArray && this.octetsArray.length !== 4)
+      throw new Error("Array is undefined or Elements are missing in the array");
 
-  // Set the name of the ip, incase there is a name;
-  setIpName(name) {
-    this.name = new String(name);
+    // Prints string with template literal string
+    return `${this.octetsArray[0].toString(2)}.${this.octetsArray[1].toString(2)}.${this.octetsArray[2].toString(2)}.${this.octetsArray[3].toString(2)}/${this.prefix}`;
   }
 
-  // gets the total amount of usable hosts
-  getTotalAvailableHosts() {
-    return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
-  }
 
   // First ip
   getNetworkAddress() {
+    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+      throw new Error("Array is undefined or Elements are missing in the array");
+
+    let networkAddress = this.getNetworkAddressArr();
+    return `${networkAddress[0]}.${networkAddress[1]}.${networkAddress[2]}.${networkAddress[3]}/${this.prefix}`;
+  }
+  getNetworkAddressArr() {
     if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
@@ -98,8 +103,7 @@ export class ipAddress {
     for (let index = Math.ceil(this.prefix / 8); index < networkAddress.length; index++)
       networkAddress[index] = 0;
 
-    return `${networkAddress[0]}.${networkAddress[1]}.${networkAddress[2]}.${networkAddress[3]}/${this.prefix}`;
-
+    return networkAddress;
   }
 
   // Last ip
@@ -117,6 +121,16 @@ export class ipAddress {
       broadcastAddress[index] = 255;
 
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
+  }
+
+  // Set the name of the ip, incase there is a name;
+  setIpName(name) {
+    this.name = new String(name);
+  }
+
+  // gets the total amount of usable hosts
+  getTotalAvailableHosts() {
+    return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
   }
 
   // Sort the subnets from lowest prefix first to the highst, by default
