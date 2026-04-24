@@ -239,36 +239,31 @@ test("allocation 02", () => {
   //   192.168.1.0 / 25
 })
 
+test("allocation 03", () => {
+  // Arange
+  let ip = new ipAddress();
+  ip.ipAddressFromString("192.168.10.0 / 23");
+  let subnets = [new ipAddress(), new ipAddress(), new ipAddress()]
 
+  subnets[0].prefix = 24;
+  subnets[1].prefix = 25;
+  subnets[2].prefix = 25;
+
+  ip.addSubnets(subnets);
+  ip.sortSubnets();
+
+  // Act & assert
+  let networks;
+  assert.doesNotThrow(() => { networks = allocateSubnets(ip) });
+
+  // * output
+  // 192.168.11.0 / 25
+  // 192.168.11.128 / 25
+  // 192.168.10.0 / 24
+})
 
 
 /*
-  * input
-192.168.1.0 / 24
-  / 26
-  / 25
-  / 26
-
-  * output
-192.168.1.128 / 26
-192.168.1.192 / 26
-192.168.1.0 / 25
-
-
-
-  * input
-192.168.10.0 / 23
-  / 24
-  / 25
-  / 25
-
-  * output
-192.168.11.0 / 25
-192.168.11.128 / 25
-192.168.10.0 / 24
-
-
-
   * input
 10.0.0.0 / 24
   / 26

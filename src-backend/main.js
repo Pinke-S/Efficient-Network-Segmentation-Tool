@@ -4,19 +4,18 @@ import { allocateSubnets } from "./PAA.js";
 
 // Arange
 let ip = new ipAddress();
-ip.ipAddressFromString("192.168.1.0/24");
+ip.ipAddressFromString("192.168.10.0 / 23");
 let subnets = [new ipAddress(), new ipAddress(), new ipAddress()]
 
-subnets[0].prefix = 25;
-subnets[1].prefix = 26;
-subnets[2].prefix = 26;
+subnets[0].prefix = 24;
+subnets[1].prefix = 25;
+subnets[2].prefix = 25;
 
 ip.addSubnets(subnets);
 ip.sortSubnets();
 
 // Act & assert
-let networks;
-networks = allocateSubnets(ip);
+let networks = allocateSubnets(ip);
 
 console.log(networks);
 
