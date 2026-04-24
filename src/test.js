@@ -270,7 +270,7 @@ test("allocation 06", () => {
   let ip = new ipAddress();
   ip.ipAddressFromString("192.168.10.0/24");
   let subnets = [];
-  for (let i = 0; i < 12 i++) {
+  for (let i = 0; i < 17; i++) {
     subnets.push(createAddressWithPrefix(28))
   }
   ip.subnets = subnets;
