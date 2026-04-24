@@ -7,10 +7,10 @@
   "type": "module",
   "exports": {
     "./ipAddresse": [
-      "./ipaddress.js"
+      "./IP/ipaddress.js"
     ],
     "./allocation": [
-      "./PAA.js"
+      "./Subnet/PAA.js"
     ]
   },
   "scripts": {

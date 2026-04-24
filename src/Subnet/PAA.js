@@ -1,4 +1,4 @@
-import { ipAddress } from "./ipaddress.js";
+import { ipAddress } from "../IP/ipaddress.js";
 
 
 function incrementAddress(ip, minprefix, maxprefix) {

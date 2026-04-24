@@ -1,6 +1,3 @@
-import { verbose } from "./Util.js";
-
-
 /*
 * This class is meant to work as an ip but also a subnet, it has a
 * member called subnets which should contain ipaddress with prefix only until allocated.
