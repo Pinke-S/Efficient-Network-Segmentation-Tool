@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { isPromise } from 'node:util/types';
 
-import { ipAddress } from 'p2nsa';
+// import { ipAddress, allocateSubnets } from 'p2nsa';
+import { ipAddress, createAddressWithPrefix } from 'p2nsa/ipAddresse'
+import { allocateAddresses } from 'p2nsa/allocation'
+
+
 
 
 
@@ -165,23 +169,12 @@ test("Sort subnets by prefix", () => {
 
   // Arrange
   let isp = new ipAddress();
-  let ips = [new ipAddress(), new ipAddress(), new ipAddress(), new ipAddress()];
   const sortedPrefix = [25, 26, 27, 28];
+  let ips = [createAddressWithPrefix(sortedPrefix[2]), createAddressWithPrefix(sortedPrefix[1]), createAddressWithPrefix(sortedPrefix[3]), createAddressWithPrefix(sortedPrefix[0])];
+  isp.subnets = ips;
 
   // act
-  isp.ipAddressFromArray([192, 168, 1, 1], 20);
-  ips[0].ipAddressFromArray([192, 168, 1, 1], 27);
-  ips[1].ipAddressFromArray([192, 168, 1, 1], 25);
-  ips[2].ipAddressFromArray([192, 168, 1, 1], 26);
-  ips[3].ipAddressFromArray([192, 168, 1, 1], 28);
-
-  isp.addSubnets(ips);
-
-
   isp.sortSubnets();
-
-
-  // Assert
   let success = true;
 
   for (let i = 0; i < ips.length; i++) {
@@ -189,5 +182,167 @@ test("Sort subnets by prefix", () => {
       success = false;
   }
 
+  // Assert
   assert.equal(success, true);
 });
+
+
+test("allocation 01", () => {
+  // Arange
+  let ip = new ipAddress();
+  ip.ipAddressFromString("192.168.10.0/24");
+  let subnets = [createAddressWithPrefix(26), createAddressWithPrefix(26), createAddressWithPrefix(26), createAddressWithPrefix(26)]
+  ip.subnets = subnets;
+
+  // Act & assert
+  let networks;
+  assert.doesNotThrow(() => { networks = allocateAddresses(ip); });
+})
+
+test("allocation 02", () => {
+  // Arange
+  let ip = new ipAddress();
+  ip.ipAddressFromString("192.168.1.0/24");
+  let subnets = [createAddressWithPrefix(25), createAddressWithPrefix(26), createAddressWithPrefix(26)]
+  ip.subnets = subnets;
+
+  // Act & assert
+  let networks;
+  assert.doesNotThrow(() => { networks = allocateAddresses(ip) });
+
+  // * output
+  //   192.168.1.128 / 26
+  //   192.168.1.192 / 26
+  //   192.168.1.0 / 25
+})
+
+test("allocation 03", () => {
+  // Arange
+  let ip = new ipAddress();
+  ip.ipAddressFromString("192.168.10.0 / 23");
+  let subnets = [createAddressWithPrefix(24), createAddressWithPrefix(25), createAddressWithPrefix(25)]
+  ip.subnets = subnets;
+
+
+  // Act & assert
+  let networks;
+  assert.doesNotThrow(() => { networks = allocateAddresses(ip) });
+
+  // * output
+  // 192.168.11.0 / 25
+  // 192.168.11.128 / 25
+  // 192.168.10.0 / 24
+})
+
+
+test("allocation 04", () => {
+  // Arange
+  let ip = new ipAddress();
+  ip.ipAddressFromString("192.168.10.0/25");
+  let subnets = [createAddressWithPrefix(26), createAddressWithPrefix(26), createAddressWithPrefix(26), createAddressWithPrefix(26)]
+  ip.subnets = subnets;
+
+  // Act & assert
+  let networks;
+  assert.throws(() => { networks = allocateAddresses(ip); });
+})
+
+/*
+  * input
+10.0.0.0 / 24
+  / 26
+  / 26
+  / 26
+  / 26
+
+  * output
+10.0.0.0 / 26
+10.0.0.64 / 26
+10.0.0.128 / 26
+10.0.0.192 / 26
+
+
+
+  * input
+172.16.0.0 / 24
+  / 25
+  / 27
+  / 27
+  / 26
+
+
+  * output
+172.16.0.192 / 27
+172.16.0.224 / 27
+172.16.0.128 / 26
+172.16.0.0 / 25
+
+!Down is cases that should fail
+  * input
+192.168.1.0 / 25
+  / 26
+  / 26
+  / 26
+
+  * output
+ERROR
+
+
+
+  * input
+192.168.1.0 / 24
+  / 26
+  / 25
+  / 25
+
+  * output
+ERROR
+
+
+
+  * input
+192.168.1.0 / 24
+  / 23
+  / 26
+
+  * output
+ERROR
+
+
+
+  * input
+192.168.1.0 / 24
+  / 25
+  / 26
+  / 27
+  / 27
+
+  * output
+ERROR
+
+
+
+  * input
+10.0.0.0 / 24
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+  / 28
+
+
+  * output
+ERROR
+  */
