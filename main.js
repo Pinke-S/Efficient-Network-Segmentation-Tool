@@ -3,6 +3,10 @@ import {
     getTotalAdresses,
     getNextPowerOfTwo, getPrefixFromBlockSize
 } from "./src/Utils/network.js";
+import {
+    exportAllocation
+} from "./src/Utils/export.js";
+
 
 import {
     Subnet,
@@ -31,12 +35,23 @@ import {
 */
 
 // Pipeline : HTML Form -> Input Validering -> Parse Subnets -> Sortere Subnets -> Allokere Subnets
+const subnetArray = [];
 
-//primitiv test
-let arr = [];
-let IT = new Subnet("IT", 84);
-let Cafe = new Subnet("Cafe",12);
-let HQ = new Subnet("HQ", 54);
-arr.push(IT,Cafe,HQ);
-sortAllocationRequest(arr);
-console.log(arr[0],arr[1],arr[2]);
+const dummytabel = [
+    {
+        name: "Subnet A",
+        ip: "192.168.1.10",
+        networkAddress: "192.168.1.0",
+        broadcastAddress: "192.168.1.255"
+    },
+    {
+        name: "Subnet B",
+        ip: "192.168.1.10",
+        networkAddress: "192.168.1.0",
+        broadcastAddress: "192.168.1.255"
+    }
+];
+
+document.getElementById("download").addEventListener("click", () => {
+    exportAllocation(dummytabel);
+});
