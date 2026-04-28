@@ -150,6 +150,21 @@ test("Broadcast IP 02", () => {
   assert.equal(broadcastAddress, expected);
 });
 
+test("Broadcast IP 04", () => {
+
+  // Arrange
+  const str = "192.168.129.55/22";
+  const expected = "192.168.131.255/22";
+  let ip = new ipAddress();
+
+  // act
+  ip.ipAddressFromString(str);
+  let broadcastAddress = ip.getBroadcastAddress();
+
+  // Assert
+  assert.equal(broadcastAddress, expected);
+});
+
 test("Broadcast IP 03", () => {
 
   // Arrange

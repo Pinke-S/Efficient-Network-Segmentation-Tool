@@ -115,12 +115,21 @@ export class ipAddress {
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let broadcastAddress = new Uint8Array(this.octetsArray);
+    let bit, octet, mask = new Uint8Array([255]);
+
+    octet = Math.floor(this.prefix / 8);
+    bit = (this.prefix - octet * 8);
+
+    mask[0] = mask[0] >>> bit;
+
 
     // Sets the remaning bits in the octet with prefix to 1
-    broadcastAddress[Math.floor(this.prefix / 8)] = broadcastAddress[Math.floor(this.prefix / 8)] | ((Math.pow(2, (32 - this.prefix) % 8) - 1));
+    //broadcastAddress[Math.floor(this.prefix / 8)] = broadcastAddress[Math.floor(this.prefix / 8)] | ((Math.pow(2, (32 - this.prefix) % 8) - 1));
+
+    broadcastAddress[octet] = broadcastAddress[octet] | mask[0];
 
     // Sets the remaning octets to 255 (11111111)
-    for (let index = Math.ceil(this.prefix / 8); index < broadcastAddress.length; index++)
+    for (let index = octet + 1; index < broadcastAddress.length; index++)
       broadcastAddress[index] = 255;
 
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
