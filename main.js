@@ -149,6 +149,7 @@ function renderVisualization(totalHost, subnets) {
     visualization.innerHTML = "";
 
     const TOTAL = totalHost;
+    let colorsUsed = [];
 
     const bar = document.createElement("div");
     bar.classList.add("networkBar");
@@ -162,7 +163,7 @@ function renderVisualization(totalHost, subnets) {
         box.classList.add("subnetBox");
 
         box.style.flex = size;
-        box.style.backgroundColor = getRandomColor();
+        box.style.backgroundColor = getRandomColor(colorsUsed);
 
         box.textContent = `${subnet.name} (${size})`;
 
@@ -199,14 +200,35 @@ function renderVisualization(totalHost, subnets) {
    COLOR HELPER
 ========================= */
 
-function getRandomColor() {
+function getRandomColor(colorsUsed) {
+
     const colors = [
-        "#3a82f7",
-        "#e5533d",
-        "#2ecc71",
-        "#f1c40f",
-        "#9b59b6",
-        "#1abc9c"
+        "#e6194b",
+        "#3cb44b",
+        "#ffe119",
+        "#4363d8",
+        "#f58231",
+        "#911eb4",
+        "#46f0f0",
+        "#f032e6",
+        "#bcf60c",
+        "#008080",
+        "#9a6324",
+        "#800000",
+        "#808000",
+        "#000075",
+        "#ff6b6b",
+        "#6bc5ff",
+        "#ff9f43",
+        "#10ac84",
+        "#5f27cd",
+        "#1dd1a1"
     ];
-    return colors[Math.floor(Math.random() * colors.length)];
+    if (colorsUsed.length >= colors.length) {colorsUsed.length = 0;}
+    let rnd = colors[Math.floor(Math.random() * colors.length)];
+    while(colorsUsed.includes(rnd)) {
+        rnd = colors[Math.floor(Math.random() * colors.length)];
+    }
+    colorsUsed.push(rnd);
+    return rnd;
 }

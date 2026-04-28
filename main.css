@@ -152,16 +152,23 @@ legend {
   max-width: 600px;
 }
 
-/* The full /24 bar */
+/* =========================
+   NETWORK BAR
+========================= */
+
 .networkBar {
   display: flex;
+  align-items: stretch;
   height: 40px;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #2c313c;
 }
 
-/* Each subnet block */
+/* =========================
+   SUBNET BOXES
+========================= */
+
 .subnetBox {
   display: flex;
   align-items: center;
@@ -170,8 +177,38 @@ legend {
   font-size: 0.75rem;
   color: white;
 
-  border-right: 1px solid #000;
+  border-right: 1px solid rgba(0, 0, 0, 0.4);
+
+  position: relative;
+  cursor: pointer;
+
+  transition:
+          transform 0.15s ease,
+          opacity 0.15s ease,
+          box-shadow 0.15s ease,
+          filter 0.15s ease;
 }
+
+/* Hover effekt */
+.subnetBox:hover {
+  box-shadow: 0 0 0 2px #fff inset,
+  0 0 12px rgba(0,0,0,0.5);
+  filter: brightness(1.15);
+}
+
+/*resten af baren skal have en mindre opacity imens hover*/
+.networkBar:hover .subnetBox {
+  opacity: 0.5;
+}
+
+/* Keep hovered visible */
+.networkBar .subnetBox:hover {
+  opacity: 1;
+}
+
+/* =========================
+   MODAL
+========================= */
 
 /* Overlay background */
 #modalOverlay {
