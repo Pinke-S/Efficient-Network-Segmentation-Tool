@@ -4,10 +4,11 @@
 // Har alle fælter gyldige karakter?
 
 import {Subnet} from "./parsing.js";
-import {getNextPowerOfTwo, getTotalAdresses} from "../Utils/network.js";
+import {getNextPowerOfTwo, getPrefix, getTotalAdresses} from "../Utils/network.js";
 
 function isValidIP(ipAddress) {
-    const parts = ipAddress.split(".");
+    let ip = ipAddress.split("/")[0];
+    const parts = ip.split(".");
 
     // Tjek om der er 4 dele
     if (parts.length !== 4) {
@@ -35,6 +36,8 @@ function isValidIP(ipAddress) {
 
 export function validateSubnetAllocation(IP,subnetForm) {
 
+    let prefix = getPrefix(IP);
+
     isValidIP(IP);
 
     let totalRequired = 0;
@@ -52,7 +55,7 @@ export function validateSubnetAllocation(IP,subnetForm) {
 
     });
 
-    if( totalRequired > getTotalAdresses(IP) ){
+    if( totalRequired > getTotalAdresses(prefix) ){
         throw new Error('The number of requested addresses exceed available addresses');
     }
 

@@ -15,6 +15,7 @@ import {
     sortAllocationRequest,
 
 } from "./src/Subnet/parsing.js";
+import {validateSubnetAllocation} from "./src/Subnet/inputValidation.js";
 
 
 
@@ -101,11 +102,20 @@ const visualization = document.getElementById("visualization");
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
+    const IPInput = document.getElementById("ipInput_id").value;
 
-    const subnets = getFormRows(form);
-    sortAllocationRequest(subnets);
+    console.log(IPInput);
+    try {
+        validateSubnetAllocation(IPInput, form);
 
-    renderVisualization(subnets);
+        const subnets = getFormRows(form);
+        sortAllocationRequest(subnets);
+        renderVisualization(subnets);
+
+    } catch (err) {
+        console.error(err.message);
+        alert(err.message);
+    }
 });
 
 /* =========================
