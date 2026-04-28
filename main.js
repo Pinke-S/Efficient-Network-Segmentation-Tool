@@ -1,11 +1,12 @@
 import {
     getPrefix,
     getTotalAdresses,
-    getNextPowerOfTwo, getPrefixFromBlockSize
-} from "./src/Utils/network.js";
+    getNextPowerOfTwo,
+    getPrefixFromBlockSize
+} from "./src/utils/network.js";
 import {
     exportAllocation
-} from "./src/Utils/export.js";
+} from "./src/utils/export.js";
 
 
 import {
@@ -201,7 +202,7 @@ function getRandomColor() {
 }
 
 // Pipeline : HTML Form -> Input Validering -> Parse Subnets -> Sortere Subnets -> Allokere Subnets
-const subnetArray = [];
+/*const subnetArray = [];
 
 const dummytabel = [
     {
@@ -220,4 +221,4 @@ const dummytabel = [
 
 document.getElementById("download").addEventListener("click", () => {
     exportAllocation(dummytabel);
-});
+}); */
