@@ -150,7 +150,7 @@ test("Broadcast IP 02", () => {
   assert.equal(broadcastAddress, expected);
 });
 
-test("Broadcast IP 04", () => {
+test("Broadcast IP 03", () => {
 
   // Arrange
   const str = "192.168.129.55/22";
@@ -165,7 +165,7 @@ test("Broadcast IP 04", () => {
   assert.equal(broadcastAddress, expected);
 });
 
-test("Broadcast IP 03", () => {
+test("Broadcast IP 04", () => {
 
   // Arrange
   const str = "192.168.1.55/20";
