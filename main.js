@@ -8,7 +8,7 @@ import {
 import {
     Subnet,
     getFormRows,
-    sortAllocationRequest
+    sortAllocationRequest,
 
 } from "./src/Subnet/parsing.js";
 
@@ -99,7 +99,7 @@ form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const subnets = getFormRows(form);
-    sortSubnets(subnets);
+    sortAllocationRequest(subnets);
 
     renderVisualization(subnets);
 });
