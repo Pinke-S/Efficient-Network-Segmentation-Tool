@@ -107,7 +107,6 @@ form.addEventListener("submit", (e) => {
     console.log(IPInput);
     try {
         validateSubnetAllocation(IPInput, form);
-
         const subnets = getFormRows(form);
         sortAllocationRequest(subnets);
         renderVisualization(subnets);
