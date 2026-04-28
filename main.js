@@ -166,7 +166,6 @@ function renderVisualization(totalHost, subnets) {
 
         box.textContent = `${subnet.name} (${size})`;
 
-        // ✅ CLICK HANDLER (FIXED LOCATION)
         box.addEventListener("click", () => {
             modalTitle.textContent = subnet.name;
 
