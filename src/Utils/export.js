@@ -1,4 +1,5 @@
-const { jsPDF } = window.jspdf;
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export function exportAllocation(data) {
     const doc = new jsPDF();
@@ -14,13 +15,13 @@ export function exportAllocation(data) {
         minute: '2-digit'
     });
 
-
     doc.text(`Date: ${dateStr}`, 14, 28);
     doc.text(`Time: ${timeStr}`, 14, 34);
 
-    autoTable(doc, {
+    autoTable(doc,
+        {
         startY: 40, // offset til at tabellen kan starte nedenunder titlen
-        head: [["Name", "Address", "Network Address", "Broadcast Address"]],
+        head: [["Name", "CIDR", "Network Address", "Broadcast Address"]],
         body: data.map(d => [
             d.name,
             d.ip,
