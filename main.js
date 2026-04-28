@@ -103,13 +103,15 @@ const visualization = document.getElementById("visualization");
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     const IPInput = document.getElementById("ipInput_id").value;
+    let totalHost =  getTotalAdresses(IPInput.split("/")[1]);
+
 
     console.log(IPInput);
     try {
         validateSubnetAllocation(IPInput, form);
         const subnets = getFormRows(form);
         sortAllocationRequest(subnets);
-        renderVisualization(subnets);
+        renderVisualization(totalHost, subnets);
 
     } catch (err) {
         console.error(err.message);
@@ -143,10 +145,10 @@ modalOverlay.addEventListener("click", (e) => {
    VISUALIZATION FUNCTION
 ========================= */
 
-function renderVisualization(subnets) {
+function renderVisualization(totalHost, subnets) {
     visualization.innerHTML = "";
 
-    const TOTAL = 256; // /24
+    const TOTAL = totalHost;
 
     const bar = document.createElement("div");
     bar.classList.add("networkBar");
