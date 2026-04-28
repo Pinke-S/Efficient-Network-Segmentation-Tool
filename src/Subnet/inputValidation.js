@@ -1,10 +1,12 @@
-// Lav Input Validering ift. subnets
 
 //  Har alle subnet felter navn  + host requirement?
 
 // Har alle fælter gyldige karakter?
 
 // Er summen af alle subnets block size <= tilgænlige addresser til ip addresse?
+import {Subnet} from "./parsing.js";
+import {getNextPowerOfTwo, getTotalAdresses} from "../Utils/network.js";
+
 function isValidIP(ipAddress) {
     const parts = ipAddress.split(".");
 
@@ -25,11 +27,36 @@ function isValidIP(ipAddress) {
             !Number.isInteger(number)   // ikke heltal
         ) {
             throw new Error("Invalid IP address");
-            return false;
+
         }
     }
 
     return true;
 }
 
+export function validateSubnetAllocation(IP,subnetForm) {
+
+    let totalRequired = 0;
+    const rows = subnetForm.querySelectorAll(".subnetRow");
+    if (rows.length === 0) {
+        throw new Error("No subnet rows provided");
+    }
+
+    rows.forEach(row => {
+        const hosts = Number(row.querySelector('[name="hosts"]').value);
+        totalRequired += getNextPowerOfTwo(hosts + 2);
+        if(hosts === 0){
+            throw new Error("Empty host requirement");
+        }
+
+    });
+
+    if( totalRequired > getTotalAdresses(IP) ){
+        throw new Error('The number of requested addresses exceed available addresses');
+    }
+
+    return true;
+
+
+}
 
