@@ -80,27 +80,33 @@ export class ipAddress {
 
 
   // First ip
+  getNetworkAddressArr() {
+    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+      throw new Error("Array is undefined or Elements are missing in the array");
+
+    let networkAddress = new Uint8Array(this.octetsArray);
+    let bit, octet, mask = new Uint8Array([255]);
+
+    octet = Math.floor(this.prefix / 8);
+    bit = 8 - (this.prefix - octet * 8);
+
+    mask[0] = mask[0] << bit;
+
+    // Sets the remaning bits in the octet with prefix to 0
+    networkAddress[octet] = networkAddress[octet] & mask[0];
+
+    // Sets the remaning octets to 0 (00000000)
+    for (let index = octet + 1; index < networkAddress.length; index++)
+      networkAddress[index] = 0;
+
+    return networkAddress;
+  }
   getNetworkAddress() {
     if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let networkAddress = this.getNetworkAddressArr();
     return `${networkAddress[0]}.${networkAddress[1]}.${networkAddress[2]}.${networkAddress[3]}/${this.prefix}`;
-  }
-  getNetworkAddressArr() {
-    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
-      throw new Error("Array is undefined or Elements are missing in the array");
-
-    let networkAddress = new Uint8Array(this.octetsArray);
-
-    // Sets the remaning bits in the octet with prefix to 0
-    networkAddress[Math.floor(this.prefix / 8)] = networkAddress[Math.floor(this.prefix / 8)] & ((Math.pow(2, (32 - this.prefix) % 8) - 1) ^ 255);
-
-    // Sets the remaning octets to 0 (00000000)
-    for (let index = Math.ceil(this.prefix / 8); index < networkAddress.length; index++)
-      networkAddress[index] = 0;
-
-    return networkAddress;
   }
 
   // Last ip
