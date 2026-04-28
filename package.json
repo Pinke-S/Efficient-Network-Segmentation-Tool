@@ -1,0 +1,27 @@
+{
+  "name": "p2nsa",
+  "version": "1.0.0",
+  "description": "Network Segmentation Algorithm for a P2 project",
+  "license": "ISC",
+  "author": "cs-26-dat-2-03",
+  "type": "module",
+  "exports": {
+    "./ipAddresse": [
+      "./src/IP/ipaddress.js"
+    ],
+    "./allocation": [
+      "./src/Subnet/PAA.js"
+    ]
+  },
+  "scripts": {
+    "test": "node src/test.js",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.7",
+    "vite": "^5.2.0"
+  }
+}

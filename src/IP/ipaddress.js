@@ -1,21 +1,18 @@
-import { verbose } from "p2nsa";
-
-
 /*
 * This class is meant to work as an ip but also a subnet, it has a
 * member called subnets which should contain ipaddress with prefix only until allocated.
 */
+export function createAddressWithPrefix(prefix) {
+  let ip = new ipAddress();
+  ip.prefix = prefix;
+  return ip;
+}
+
+
 export class ipAddress {
 
   constructor() { this.name = "", this.octetsArray = undefined, this.prefix = 0; this.subnets = [] }
 
-  // Meant to easily copy ip addresses and prevent doing it by refrence.
-  copyIp(ipToCopy) {
-    this.name = new String(ipToCopy.String);
-    this.octetsArray = new Uint8Array(ipToCopy.octetsArray);
-    this.prefix = ipToCopy.prefix;
-    this.subnets = new Array(ipToCopy.subnet);
-  }
 
   // Meant to fill the ip from an Uint8Array and a prefix.
   ipAddressFromArray(arr, prefix) {
@@ -73,23 +70,43 @@ export class ipAddress {
     // Prints string with template literal string
     return `${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`;
   }
+  ipAddressToBinaryString() {
+    if (!this.octetsArray && this.octetsArray.length !== 4)
+      throw new Error("Array is undefined or Elements are missing in the array");
+
+    // Prints string with template literal string
+    return `${this.octetsArray[0].toString(2)}.${this.octetsArray[1].toString(2)}.${this.octetsArray[2].toString(2)}.${this.octetsArray[3].toString(2)}/${this.prefix}`;
+  }
+
 
   // First ip
-  getNetworkAddress() {
+  getNetworkAddressArr() {
     if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let networkAddress = new Uint8Array(this.octetsArray);
+    let bit, octet, mask = new Uint8Array([255]);
+
+    octet = Math.floor(this.prefix / 8);
+    bit = 8 - (this.prefix - octet * 8);
+
+    mask[0] = mask[0] << bit;
 
     // Sets the remaning bits in the octet with prefix to 0
-    networkAddress[Math.floor(this.prefix / 8)] = networkAddress[Math.floor(this.prefix / 8)] & ((Math.pow(2, (32 - this.prefix) % 8) - 1) ^ 255);
+    networkAddress[octet] = networkAddress[octet] & mask[0];
 
     // Sets the remaning octets to 0 (00000000)
-    for (let index = Math.ceil(this.prefix / 8); index < networkAddress.length; index++)
+    for (let index = octet + 1; index < networkAddress.length; index++)
       networkAddress[index] = 0;
 
-    return `${networkAddress[0]}.${networkAddress[1]}.${networkAddress[2]}.${networkAddress[3]}/${this.prefix}`;
+    return networkAddress;
+  }
+  getNetworkAddress() {
+    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+      throw new Error("Array is undefined or Elements are missing in the array");
 
+    let networkAddress = this.getNetworkAddressArr();
+    return `${networkAddress[0]}.${networkAddress[1]}.${networkAddress[2]}.${networkAddress[3]}/${this.prefix}`;
   }
 
   // Last ip
@@ -109,4 +126,49 @@ export class ipAddress {
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
   }
 
+  // Set the name of the ip, incase there is a name;
+  setIpName(name) {
+    this.name = new String(name);
+  }
+
+  // gets the total amount of usable hosts
+  getTotalAvailableHosts() {
+    return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
+  }
+
+  // Sort the subnets from lowest prefix first to the highst, by default
+  sortSubnets(cmpfunc) {
+    if (!cmpfunc) {
+      this.subnets.sort((a, b) => { return a.prefix - b.prefix })
+    }
+    else
+      this.subnets.sort(cmpfunc);
+  }
+
+  // Add a singular subnet
+  addSubnet(subnet) {
+    console.log("Deprecated");
+
+    this.subnets.push(new ipAddress());
+    this.subnets[this.subnets.length - 1].copyIp(subnet);
+  }
+
+  // Adds an array of subnets
+  addSubnets(subnetarr) {
+    console.log("Deprecated");
+
+    subnetarr.forEach(element => {
+      this.addSubnet(element);
+    });
+  }
+
+  // Meant to easily copy ip addresses and prevent doing it by refrence.
+  copyIp(ipToCopy) {
+    console.log("Deprecated");
+
+    this.name = new String(ipToCopy.String);
+    this.octetsArray = new Uint8Array(ipToCopy.octetsArray);
+    this.prefix = ipToCopy.prefix;
+    this.subnets = new Array(ipToCopy.subnet);
+  }
 }
