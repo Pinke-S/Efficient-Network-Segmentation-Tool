@@ -6,10 +6,10 @@ vcs.xml
 .vscode/
 
 node_modules/
-.package-lock.json
 dist/
 .vite/
 
 .env
 .DS_Store
 Thumbs.db
+package-lock.json
