@@ -124,8 +124,6 @@ export class ipAddress {
 
 
     // Sets the remaning bits in the octet with prefix to 1
-    //broadcastAddress[Math.floor(this.prefix / 8)] = broadcastAddress[Math.floor(this.prefix / 8)] | ((Math.pow(2, (32 - this.prefix) % 8) - 1));
-
     broadcastAddress[octet] = broadcastAddress[octet] | mask[0];
 
     // Sets the remaning octets to 255 (11111111)
