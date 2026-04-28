@@ -48,12 +48,14 @@ export function validateSubnetAllocation(IP,subnetForm) {
 
     rows.forEach(row => {
         const hosts = Number(row.querySelector('[name="hosts"]').value);
-        totalRequired += getNextPowerOfTwo(hosts + 2);
+        totalRequired += getNextPowerOfTwo(hosts);
         if(hosts === 0){
             throw new Error("Empty host requirement");
         }
 
     });
+    console.log(totalRequired);
+    console.log( getTotalAdresses(prefix));
 
     if( totalRequired > getTotalAdresses(prefix) ){
         throw new Error('The number of requested addresses exceed available addresses');
