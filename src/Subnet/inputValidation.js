@@ -3,7 +3,6 @@
 
 // Har alle fælter gyldige karakter?
 
-// Er summen af alle subnets block size <= tilgænlige addresser til ip addresse?
 import {Subnet} from "./parsing.js";
 import {getNextPowerOfTwo, getTotalAdresses} from "../Utils/network.js";
 
@@ -35,6 +34,8 @@ function isValidIP(ipAddress) {
 }
 
 export function validateSubnetAllocation(IP,subnetForm) {
+
+    isValidIP(IP);
 
     let totalRequired = 0;
     const rows = subnetForm.querySelectorAll(".subnetRow");

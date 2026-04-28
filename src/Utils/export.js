@@ -1,7 +1,13 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import {validateSubnetAllocation} from "../Subnet/inputValidation.js";
 
-export function exportAllocation(data) {
+export function exportAllocation(ip, data) {
+
+    if(!validateSubnetAllocation(ip, data)) {
+        throw new Error("Cannot export allocation : Invalid subnet allocation");
+    }
+
     const doc = new jsPDF();
 
     doc.setFontSize(18);
