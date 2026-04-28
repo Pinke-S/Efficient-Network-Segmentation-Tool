@@ -1,4 +1,5 @@
-const { jsPDF } = window.jspdf;
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export function exportAllocation(data) {
     const doc = new jsPDF();

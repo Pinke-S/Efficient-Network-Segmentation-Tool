@@ -4,10 +4,8 @@ import {
     getNextPowerOfTwo,
     getPrefixFromBlockSize
 } from "./src/utils/network.js";
-import {
-    exportAllocation
-} from "./src/utils/export.js";
 
+import { allocateSubnets } from "./src/utils/vlsm.js";
 
 import {
     Subnet,
@@ -102,10 +100,13 @@ const visualization = document.getElementById("visualization");
 form.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const subnets = getFormRows(form);
-    sortAllocationRequest(subnets);
+   const subnets = getFormRows(form);
+sortAllocationRequest(subnets);
 
-    renderVisualization(subnets);
+// 🔥 THIS is the key line
+allocateSubnets("192.168.1.0/24", subnets);
+
+renderVisualization(subnets);
 });
 
 /* =========================
@@ -120,14 +121,14 @@ const modalNetwork = document.getElementById("modalNetwork");
 const modalBroadcast = document.getElementById("modalBroadcast");
 const modalPrefix = document.getElementById("modalPrefix");
 
-closeModalBtn.addEventListener("click", () => {
-    modalOverlay.classList.add("hidden");
-});
+box.addEventListener("click", () => {
+    modalTitle.textContent = subnet.name;
 
-modalOverlay.addEventListener("click", (e) => {
-    if (e.target === modalOverlay) {
-        modalOverlay.classList.add("hidden");
-    }
+    modalNetwork.textContent = subnet.networkAddress;
+    modalBroadcast.textContent = subnet.broadcastAddress;
+    modalPrefix.textContent = "/" + subnet.prefix;
+
+    modalOverlay.classList.remove("hidden");
 });
 
 /* =========================
@@ -145,7 +146,7 @@ function renderVisualization(subnets) {
     let used = 0;
 
     subnets.forEach(subnet => {
-        const size = subnet.nextPowerOfTwo;
+        const size = subnet.blockSize;
 
         const box = document.createElement("div");
         box.classList.add("subnetBox");

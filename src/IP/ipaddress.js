@@ -2,6 +2,9 @@
 * This class is meant to work as an ip but also a subnet, it has a
 * member called subnets which should contain ipaddress with prefix only until allocated.
 */
+
+
+
 export function createAddressWithPrefix(prefix) {
   let ip = new ipAddress();
   ip.prefix = prefix;
@@ -64,7 +67,7 @@ export class ipAddress {
 
   // Meant to print the ip to string
   ipAddressToString() {
-    if (!this.octetsArray && this.octetsArray.length !== 4)
+    if (!this.octetsArray || this.octetsArray.length !== 4)
       throw new Error("Array is undefined or Elements are missing in the array");
 
     // Prints string with template literal string
