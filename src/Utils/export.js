@@ -1,40 +1,42 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import {validateSubnetAllocation} from "../Subnet/inputValidation.js";
+import { ipAddress } from "../IP/ipaddress.js";
 
-export function exportAllocation(ip, data) {
+export function exportAllocation(subnets) {
+  const doc = new jsPDF();
 
-    if(!validateSubnetAllocation(ip, data)) {
-        throw new Error("Cannot export allocation : Invalid subnet allocation");
-    }
+  doc.setFontSize(18);
+  doc.text("Network Allocation", 14, 20);
 
-    const doc = new jsPDF();
+  const now = new Date();
 
-    doc.setFontSize(18);
-    doc.text("Network Allocation", 14, 20); // Måske mulighed for personlig navngivning?
+  doc.setFontSize(10);
+  doc.text(`Date: ${now.toLocaleDateString()}`, 14, 28);
+  doc.text(
+    `Time: ${now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`,
+    14,
+    34
+  );
 
-    doc.setFontSize(10);
-    const now = new Date();
-    const dateStr = now.toLocaleDateString();
-    const timeStr = now.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+  autoTable(doc, {
+    startY: 40,
+    head: [["Name", "Hosts", "CIDR", "Network Address", "Broadcast Address"]],
+    body: subnets.map((subnet) => {
+      const ip = new ipAddress();
+      ip.ipAddressFromArray(subnet.octetsArray, subnet.prefix);
 
-    doc.text(`Date: ${dateStr}`, 14, 28);
-    doc.text(`Time: ${timeStr}`, 14, 34);
+      return [
+        subnet.name,
+        subnet.hostRequirement,
+        "/" + subnet.prefix,
+        ip.getNetworkAddress(),
+        ip.getBroadcastAddress(),
+      ];
+    }),
+  });
 
-    autoTable(doc,
-        {
-        startY: 40, // offset til at tabellen kan starte nedenunder titlen
-        head: [["Name", "CIDR", "Network Address", "Broadcast Address"]],
-        body: data.map(d => [
-            d.name,
-            d.ip,
-            d.networkAddress,
-            d.broadcastAddress
-        ])
-    });
-
-    doc.save("report.pdf");
+  doc.save("network-allocation.pdf");
 }
