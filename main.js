@@ -103,6 +103,9 @@ form.addEventListener("submit", (e) => {
 
     const allocatedSubnets = allocateAddresses(isp);
     latestAllocatedSubnets = allocatedSubnets;
+    downloadBtn.disabled = false;
+    downloadBtn.style.backgroundColor = "";
+    downloadBtn.style.cursor = "pointer";
 
     const totalAddresses = getTotalAdresses(isp.prefix);
 
@@ -116,6 +119,9 @@ form.addEventListener("submit", (e) => {
 /* pdf export */
 
 const downloadBtn = document.getElementById("download");
+downloadBtn.disabled = true;
+downloadBtn.style.backgroundColor = "#777";
+downloadBtn.style.cursor = "not-allowed";
 
 if (downloadBtn) {
   downloadBtn.addEventListener("click", () => {

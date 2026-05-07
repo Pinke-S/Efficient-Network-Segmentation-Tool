@@ -113,7 +113,7 @@ legend {
 }
 
 /* Submit button */
-#subnetApplyButton_id {
+#subnetApplyButton_id,#download {
   margin-top: 1rem;
   padding: 0.6rem;
 
