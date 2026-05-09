@@ -16,7 +16,7 @@ import { ipAddress } from "./src/IP/ipaddress.js";
 
 let latestAllocatedSubnets = [];
 
-/* add subnet row*/ 
+/* add subnet row*/
 
 const addButton = document.getElementById("addSubnetButton_id");
 const subnetContainer = document.querySelector(".subnetBlock");
@@ -99,7 +99,13 @@ form.addEventListener("submit", (e) => {
     const subnets = getFormRows(form);
     sortAllocationRequest(subnets);
 
-    isp.subnets = subnets;
+    subnets.forEach((subnet) => {
+      let i = new ipAddress();
+      i.name = subnet.name;
+      i.prefix = subnet.prefix;
+      isp.subnets.push(i);
+    })
+
 
     const allocatedSubnets = allocateAddresses(isp);
     latestAllocatedSubnets = allocatedSubnets;
@@ -109,7 +115,8 @@ form.addEventListener("submit", (e) => {
 
     const totalAddresses = getTotalAdresses(isp.prefix);
 
-    renderVisualization(totalAddresses, allocatedSubnets);
+
+    renderVisualization(totalAddresses, isp.subnets);
   } catch (err) {
     console.error(err);
     alert(err.message);
@@ -146,22 +153,23 @@ function renderVisualization(totalAddresses, subnets) {
   let colorsUsed = [];
 
   subnets.forEach((subnet) => {
-    const size = subnet.nextPowerOfTwo;
+    const size = 2 ** subnet.prefix;
 
     const box = document.createElement("div");
     box.classList.add("subnetBox");
 
     box.style.flex = size;
-    box.style.backgroundColor = getRandomColor(colorsUsed);
-
-    const subnetIp = subnetToIpAddress(subnet);
+    if (subnet.name !== "free")
+      box.style.backgroundColor = getRandomColor(colorsUsed);
+    else
+      box.style.backgroundColor = "#444";
 
     box.textContent = `${subnet.name} /${subnet.prefix}`;
 
     box.addEventListener("click", () => {
       modalTitle.textContent = subnet.name;
-      modalNetwork.textContent = subnetIp.getNetworkAddress();
-      modalBroadcast.textContent = subnetIp.getBroadcastAddress();
+      modalNetwork.textContent = subnet.getNetworkAddress();
+      modalBroadcast.textContent = subnet.getBroadcastAddress();
       modalPrefix.textContent = "/" + subnet.prefix;
 
       modalOverlay.classList.remove("hidden");
@@ -169,7 +177,8 @@ function renderVisualization(totalAddresses, subnets) {
 
     bar.appendChild(box);
     used += size;
-  });
+  }
+  );
 
   if (used < totalAddresses) {
     const free = document.createElement("div");

@@ -133,15 +133,21 @@ export class ipAddress {
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
   }
 
-  // Set the name of the ip, incase there is a name;
-  setIpName(name) {
-    this.name = new String(name);
+  printIP() {
+    console.log(`${this.name}: ${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`);
+    this.subnets.forEach((s) => { if (this.subnets) s.printIP() });
   }
 
   // gets the total amount of usable hosts
   getTotalAvailableHosts() {
     return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
   }
+
+  // Set the name of the ip, incase there is a name;
+  setIpName(name) {
+    this.name = new String(name);
+  }
+
 
   // Sort the subnets from lowest prefix first to the highst, by default
   sortSubnets(cmpfunc) {

@@ -2,7 +2,6 @@ import { ipAddress } from "../IP/ipaddress.js";
 
 
 function incrementAddress(ip, minprefix, maxprefix) {
-  let before = new Uint8Array(ip);
   if (minprefix === maxprefix) {
     throw new Error(`Can't increament and ip of this range [${minprefix},${maxprefix}]`);
     return 0; // Failure - will never be reached because of the throw
@@ -29,6 +28,34 @@ function incrementAddress(ip, minprefix, maxprefix) {
   return 0; // Failure - will never be reached because of the throw
 }
 
+function allocateRemaning(isp, toAllocate, curAddress, curPrefix, name = "free") {
+  let octet, bit, mask = new Uint8Array(1);
+
+  while (curPrefix > isp.prefix) {
+    octet = Math.floor((curPrefix - 1) / 8);
+    bit = 7 - ((curPrefix - 1) % 8);
+    mask = 1 << bit;
+
+
+    if (!(curAddress[octet] & mask)) {
+
+
+      curAddress[octet] |= mask;
+
+
+      let addr = new ipAddress();
+      addr.name = name;
+      addr.octetsArray = new Uint8Array(curAddress);
+      addr.prefix = curPrefix;
+      toAllocate.push(addr);
+    }
+
+
+    curPrefix--;
+  }
+  return toAllocate;
+}
+
 export function allocateAddresses(isp) {
   let curPrefix;
   let toAllocate = isp.subnets;
@@ -38,7 +65,8 @@ export function allocateAddresses(isp) {
     toAllocate[i].octetsArray = new Uint8Array(curAddress);
     curPrefix = toAllocate[i].prefix;
     if (i === toAllocate.length - 1)
-      return toAllocate;
+      return allocateRemaning(isp, toAllocate, curAddress, curPrefix);
+
     if (incrementAddress(curAddress, isp.prefix, curPrefix)) {
       i++;
     } else

@@ -25,15 +25,12 @@ export function exportAllocation(subnets) {
     startY: 40,
     head: [["Name", "Hosts", "CIDR", "Network Address", "Broadcast Address"]],
     body: subnets.map((subnet) => {
-      const ip = new ipAddress();
-      ip.ipAddressFromArray(subnet.octetsArray, subnet.prefix);
-
       return [
         subnet.name,
-        subnet.hostRequirement,
+        2 ** (32 - subnet.prefix) - 2,
         "/" + subnet.prefix,
-        ip.getNetworkAddress(),
-        ip.getBroadcastAddress(),
+        subnet.getNetworkAddress(),
+        subnet.getBroadcastAddress(),
       ];
     }),
   });
