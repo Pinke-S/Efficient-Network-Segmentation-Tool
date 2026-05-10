@@ -142,6 +142,9 @@ export class ipAddress {
   getTotalAvailableHosts() {
     return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
   }
+  getTotalAddresses() {
+    return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
+  }
 
   // Set the name of the ip, incase there is a name;
   setIpName(name) {

@@ -153,7 +153,7 @@ function renderVisualization(totalAddresses, subnets) {
   let colorsUsed = [];
 
   subnets.forEach((subnet) => {
-    const size = 2 ** subnet.prefix;
+    const size = subnet.getTotalAddresses();
 
     const box = document.createElement("div");
     box.classList.add("subnetBox");

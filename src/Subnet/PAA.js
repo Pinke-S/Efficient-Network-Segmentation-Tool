@@ -33,7 +33,7 @@ function allocateRemaning(isp, toAllocate, curAddress, curPrefix, name = "free")
 
   while (curPrefix > isp.prefix) {
     octet = Math.floor((curPrefix - 1) / 8);
-    bit = 7 - ((curPrefix - 1) % 8);
+    bit = 7 - ((curPrefix - 1) - octet * 8);
     mask = 1 << bit;
 
 
