@@ -15,6 +15,7 @@ import { ipAddress } from "./src/IP/ipaddress.js";
 ========================= */
 
 let latestAllocatedSubnets = [];
+let latestIP;
 
 /* add subnet row*/
 
@@ -112,6 +113,7 @@ form.addEventListener("submit", (e) => {
 
     const allocatedSubnets = allocateAddresses(isp);
     latestAllocatedSubnets = allocatedSubnets;
+    latestIP = isp;
     downloadBtn.disabled = false;
     downloadBtn.style.backgroundColor = "";
     downloadBtn.style.cursor = "pointer";
@@ -140,7 +142,7 @@ if (downloadBtn) {
       return;
     }
 
-    exportAllocation(latestAllocatedSubnets);
+    exportAllocation(latestIP, latestAllocatedSubnets);
   });
 }
 
