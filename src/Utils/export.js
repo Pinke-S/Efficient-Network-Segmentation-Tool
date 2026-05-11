@@ -23,7 +23,7 @@ export function exportAllocation(subnets) {
 
   autoTable(doc, {
     startY: 40,
-    head: [["Name", "Hosts", "CIDR", "Network Address", "Broadcast Address"]],
+    head: [["Name", "Hosts", "CIDR", "Network Address", "Broadcast Address", "Subnet Mask", "Wildcard Mask"]],
     body: subnets.map((subnet) => {
       return [
         subnet.name,
@@ -31,6 +31,8 @@ export function exportAllocation(subnets) {
         "/" + subnet.prefix,
         subnet.getNetworkAddress(),
         subnet.getBroadcastAddress(),
+        subnet.getNetMask(),
+        subnet.getWildcardMask(),
       ];
     }),
   });
