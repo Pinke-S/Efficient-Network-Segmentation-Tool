@@ -69,6 +69,9 @@ const modalTitle = document.getElementById("modalTitle");
 const modalNetwork = document.getElementById("modalNetwork");
 const modalBroadcast = document.getElementById("modalBroadcast");
 const modalPrefix = document.getElementById("modalPrefix");
+const modalSubnetMask = document.getElementById("modalsubnetmask");
+const modalWildcardMask = document.getElementById("modalwildcardmask");
+
 
 closeModalBtn.addEventListener("click", () => {
   modalOverlay.classList.add("hidden");
@@ -171,6 +174,9 @@ function renderVisualization(totalAddresses, subnets) {
       modalNetwork.textContent = subnet.getNetworkAddress();
       modalBroadcast.textContent = subnet.getBroadcastAddress();
       modalPrefix.textContent = "/" + subnet.prefix;
+      modalSubnetMask.textContent = subnet.getNetMask();
+      modalWildcardMask.textContent = subnet.getWildcardMask();
+
 
       modalOverlay.classList.remove("hidden");
     });
@@ -180,15 +186,15 @@ function renderVisualization(totalAddresses, subnets) {
   }
   );
 
-  if (used < totalAddresses) {
-    const free = document.createElement("div");
-    free.classList.add("subnetBox");
-    free.style.flex = totalAddresses - used;
-    free.style.backgroundColor = "#444";
-    free.textContent = "Free";
+  // if (used < totalAddresses) {
+  //   const free = document.createElement("div");
+  //   free.classList.add("subnetBox");
+  //   free.style.flex = totalAddresses - used;
+  //   free.style.backgroundColor = "#444";
+  //   free.textContent = "Free";
 
-    bar.appendChild(free);
-  }
+  //   bar.appendChild(free);
+  // }
 
   visualization.appendChild(bar);
 }

@@ -110,7 +110,7 @@ export class ipAddress {
   }
 
   // Last ip
-  getBroadcastAddress() {
+  getBroadcastAddressArr() {
     if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
@@ -130,13 +130,63 @@ export class ipAddress {
     for (let index = octet + 1; index < broadcastAddress.length; index++)
       broadcastAddress[index] = 255;
 
+    return broadcastAddress;
+  }
+  getBroadcastAddress() {
+    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+      throw new Error("Array is undefined or Elements are missing in the array");
+
+    let broadcastAddress = this.getBroadcastAddressArr();
     return `${broadcastAddress[0]}.${broadcastAddress[1]}.${broadcastAddress[2]}.${broadcastAddress[3]}/${this.prefix}`;
   }
 
-  printIP() {
-    console.log(`${this.name}: ${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`);
-    this.subnets.forEach((s) => { if (this.subnets) s.printIP() });
+  getNetMaskArr() {
+    let nMask = new Uint8Array([0, 0, 0, 0]);
+
+    let bit, octet;
+
+    octet = Math.floor(this.prefix / 8);
+    bit = (this.prefix - octet * 8);
+
+    nMask[octet] = 255 << bit;
+    for (let index = 0; index < octet; index++)
+      nMask[index] = 255;
+
+    return nMask;
   }
+  getNetMask() {
+    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+      throw new Error("Array is undefined or Elements are missing in the array");
+
+    let nMask = this.getNetMaskArr();
+    return `${nMask[0]}.${nMask[1]}.${nMask[2]}.${nMask[3]}`;
+  }
+
+
+  getWildcardMaskArr() {
+    let wcMask = new Uint8Array([0, 0, 0, 0]);
+
+    let bit, octet;
+
+    octet = Math.floor(this.prefix / 8);
+    bit = (this.prefix - octet * 8);
+
+    wcMask[octet] = 255 >> bit;
+    for (let index = octet + 1; index < octet.length; index++)
+      wcMask[index] = 255;
+
+
+    return wcMask;
+  }
+  getWildcardMask() {
+    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+      throw new Error("Array is undefined or Elements are missing in the array");
+
+    let wcMask = this.getWildcardMaskArr();
+    return `${wcMask[0]}.${wcMask[1]}.${wcMask[2]}.${wcMask[3]}`;
+  }
+
+
 
   // gets the total amount of usable hosts
   getTotalAvailableHosts() {
@@ -151,6 +201,10 @@ export class ipAddress {
     this.name = new String(name);
   }
 
+  printIP() {
+    console.log(`${this.name}: ${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`);
+    this.subnets.forEach((s) => { if (this.subnets) s.printIP() });
+  }
 
   // Sort the subnets from lowest prefix first to the highst, by default
   sortSubnets(cmpfunc) {
