@@ -1,0 +1,15 @@
+.idea/
+*.iml
+modules.xml
+vcs.xml
+
+.vscode/
+
+node_modules/
+dist/
+.vite/
+
+.env
+.DS_Store
+Thumbs.db
+package-lock.json

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+  <title>Efficient Network Segmentation Tool</title>
+  <script type="module" crossorigin src="/Efficient-Network-Segmentation-Tool/assets/index-HQGbSupZ.js"></script>
+  <link rel="stylesheet" crossorigin href="/Efficient-Network-Segmentation-Tool/assets/index-DX8vMqrC.css">
+</head>
+
+<body>
+  <form id="subnetForm">
+    <h2>Network Segmentation Tool</h2>
+
+    <!-- ISP INPUT -->
+    <label for="ipInput_id">ISP Network</label>
+    <input type="text" id="ipInput_id" placeholder="192.168.1.0/24" />
+
+    <!-- CREATE SUBNETS -->
+    <fieldset class="subnetEntries_class">
+      <legend>
+        Subnets
+        <input type="button" value="+ Add" id="addSubnetButton_id" />
+      </legend>
+
+      <!-- SUBNET -->
+      <div class="subnetBlock">
+        <label>Name</label>
+        <label>Hosts</label>
+
+        <div class="subnetRow">
+          <input type="text" name="subnet" placeholder="HQ" />
+          <input type="number" name="hosts" placeholder="50" min="1" />
+          <button type="button" class="removeBtn">✕</button>
+        </div>
+      </div>
+    </fieldset>
+
+    <input type="submit" value="Calculate" id="subnetApplyButton_id" />
+    <button id="download">Download PDF</button>
+  </form>
+  <div id="visualization"></div>
+  <div id="modalOverlay" class="hidden">
+    <div id="modal">
+      <h3 id="modalTitle">Subnet Info</h3>
+
+      <p><strong>Network:</strong> <span id="modalNetwork"></span></p>
+      <p><strong>Broadcast:</strong> <span id="modalBroadcast"></span></p>
+      <p><strong>Prefix:</strong> <span id="modalPrefix"></span></p>
+      <p><strong>SubnetMask:</strong> <span id="modalsubnetmask"></span></p>
+      <p><strong>WildcardMask:</strong> <span id="modalwildcardmask"></span></p>
+
+
+      <button id="closeModalBtn">Close</button>
+    </div>
+  </div>
+</body>
+
+</body>
+
+</html>
