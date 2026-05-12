@@ -120,6 +120,22 @@ test("Network IP 03", () => {
   assert.equal(networkAddress, expected);
 });
 
+test("Network IP 04", () => {
+
+  // Arrange
+  const str = "192.168.129.55/22";
+  const expected = "192.168.128.0/22";
+  let ip = new ipAddress();
+
+  // act
+  ip.ipAddressFromString(str);
+  let broadcastAddress = ip.getNetworkAddress();
+
+  // Assert
+  assert.equal(broadcastAddress, expected);
+});
+
+
 test("Broadcast IP 01", () => {
 
   // Arrange

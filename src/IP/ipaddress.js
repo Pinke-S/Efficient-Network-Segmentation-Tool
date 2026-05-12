@@ -117,8 +117,8 @@ export class ipAddress {
     let broadcastAddress = new Uint8Array(this.octetsArray);
     let bit, octet, mask = new Uint8Array([255]);
 
-    octet = Math.floor((this.prefix - 1) / 8);
-    bit = 7 - ((this.prefix - 1) - octet * 8);
+    octet = Math.floor(this.prefix / 8);
+    bit = (this.prefix - octet * 8);
     mask[0] = mask[0] >>> bit;
 
 
