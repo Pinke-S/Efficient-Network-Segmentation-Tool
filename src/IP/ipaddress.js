@@ -87,8 +87,8 @@ export class ipAddress {
     let networkAddress = new Uint8Array(this.octetsArray);
     let bit, octet, mask = new Uint8Array([255]);
 
-    octet = Math.floor(this.prefix / 8);
-    bit = 8 - (this.prefix - octet * 8);
+    octet = Math.floor((this.prefix - 1) / 8);
+    bit = 7 - ((this.prefix - 1) - octet * 8);
 
     mask[0] = mask[0] << bit;
 
@@ -117,9 +117,8 @@ export class ipAddress {
     let broadcastAddress = new Uint8Array(this.octetsArray);
     let bit, octet, mask = new Uint8Array([255]);
 
-    octet = Math.floor(this.prefix / 8);
-    bit = (this.prefix - octet * 8);
-
+    octet = Math.floor((this.prefix - 1) / 8);
+    bit = 7 - ((this.prefix - 1) - octet * 8);
     mask[0] = mask[0] >>> bit;
 
 
@@ -145,8 +144,8 @@ export class ipAddress {
 
     let bit, octet;
 
-    octet = Math.floor(this.prefix / 8);
-    bit = (this.prefix - octet * 8);
+    octet = Math.floor((this.prefix - 1) / 8);
+    bit = 7 - ((this.prefix - 1) - octet * 8);
 
     nMask[octet] = 255 << bit;
     for (let index = 0; index < octet; index++)
@@ -164,17 +163,9 @@ export class ipAddress {
 
 
   getWildcardMaskArr() {
-    let wcMask = new Uint8Array([255, 255, 255, 255]);
-
-    let bit, octet;
-
-    octet = Math.floor(this.prefix / 8);
-    bit = (this.prefix - octet * 8);
-
-    wcMask[octet] = 255 >> bit;
-    for (let index = 0; index < octet; index++)
-      wcMask[index] = 0;
-
+    let wcMask = this.getNetMaskArr();
+    for (let i = 0; i < wcMask.length; i++)
+      wcMask[i] = ~wcMask[i];
 
     return wcMask;
   }
