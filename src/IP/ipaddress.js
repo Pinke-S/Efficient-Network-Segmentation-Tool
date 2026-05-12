@@ -164,7 +164,7 @@ export class ipAddress {
 
 
   getWildcardMaskArr() {
-    let wcMask = new Uint8Array([0, 0, 0, 0]);
+    let wcMask = new Uint8Array([255, 255, 255, 255]);
 
     let bit, octet;
 
@@ -172,8 +172,8 @@ export class ipAddress {
     bit = (this.prefix - octet * 8);
 
     wcMask[octet] = 255 >> bit;
-    for (let index = octet + 1; index < octet.length; index++)
-      wcMask[index] = 255;
+    for (let index = 0; index < octet; index++)
+      wcMask[index] = 0;
 
 
     return wcMask;
