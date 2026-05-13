@@ -12,6 +12,8 @@ function isValidIP(ipAddress) {
 
     // Tjek om der er 4 dele
     if (parts.length !== 4) {
+        throw new Error("ISP IP is invalid");
+
         return false;
     }
 
@@ -36,7 +38,7 @@ function isValidIP(ipAddress) {
 
 export function validateSubnetAllocation(IP, subnetForm) {
     if (!IP)
-        throw new Error("No ISP network provided");
+        throw new Error("No ISP IP provided");
 
     let prefix = getPrefix(IP);
 
