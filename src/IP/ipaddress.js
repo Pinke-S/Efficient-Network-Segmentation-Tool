@@ -2,12 +2,19 @@
 * This class is meant to work as an ip but also a subnet, it has a
 * member called subnets which should contain ipaddress with prefix only until allocated.
 */
+const LENGTH_OF_8BIT_BYTE = 8;
+
 export function createAddressWithPrefix(prefix) {
   let ip = new ipAddress();
   ip.prefix = prefix;
   return ip;
 }
 
+export function getPrefixcOctetAndBit(prefix) {
+  let octet = Math.floor((prefix - 1) / LENGTH_OF_8BIT_BYTE);
+  let bit = (prefix - 1) % LENGTH_OF_8BIT_BYTE;
+  return { octet, bit };
+}
 
 export class ipAddress {
 
@@ -85,12 +92,12 @@ export class ipAddress {
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let networkAddress = new Uint8Array(this.octetsArray);
-    let bit, octet, mask = new Uint8Array([255]);
+    let mask = new Uint8Array([255]);
 
-    octet = Math.floor((this.prefix - 1) / 8);
-    bit = 7 - ((this.prefix - 1) - octet * 8);
-
+    let { octet, bit } = getPrefixcOctetAndBit(this.prefix);
+    bit = 7 - bit;
     mask[0] = mask[0] << bit;
+
 
     // Sets the remaning bits in the octet with prefix to 0
     networkAddress[octet] = networkAddress[octet] & mask[0];
@@ -115,10 +122,10 @@ export class ipAddress {
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let broadcastAddress = new Uint8Array(this.octetsArray);
-    let bit, octet, mask = new Uint8Array([255]);
 
-    octet = Math.floor(this.prefix / 8);
-    bit = (this.prefix - octet * 8);
+    let { octet, bit } = getPrefixcOctetAndBit(this.prefix);
+    bit++;
+    let mask = new Uint8Array([255]);
     mask[0] = mask[0] >>> bit;
 
 
@@ -142,10 +149,8 @@ export class ipAddress {
   getNetMaskArr() {
     let nMask = new Uint8Array([0, 0, 0, 0]);
 
-    let bit, octet;
-
-    octet = Math.floor((this.prefix - 1) / 8);
-    bit = 7 - ((this.prefix - 1) - octet * 8);
+    let { octet, bit } = getPrefixcOctetAndBit(this.prefix);
+    bit = 7 - bit;
 
     nMask[octet] = 255 << bit;
     for (let index = 0; index < octet; index++)
@@ -192,6 +197,7 @@ export class ipAddress {
     this.name = new String(name);
   }
 
+  // Used for debugging purposes
   printIP() {
     console.log(`${this.name}: ${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`);
     this.subnets.forEach((s) => { if (this.subnets) s.printIP() });

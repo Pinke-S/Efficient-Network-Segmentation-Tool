@@ -1,4 +1,4 @@
-import { ipAddress } from "../IP/ipaddress.js";
+import { ipAddress, getPrefixcOctetAndBit } from "../IP/ipaddress.js";
 
 
 function incrementAddress(ip, minprefix, maxprefix) {
@@ -7,14 +7,14 @@ function incrementAddress(ip, minprefix, maxprefix) {
     return 0; // Failure - will never be reached because of the throw
   }
 
-  let octet, bit, mask = new Uint8Array(1);
+  let mask = new Uint8Array(1);
 
   for (let i = maxprefix; i > minprefix; i--) {
     if (i === minprefix)
       throw new Error(`Can't increament and ip of this range [${minprefix},${maxprefix}], ${i}`);
 
-    octet = Math.floor((i - 1) / 8);
-    bit = 7 - ((i - 1) - octet * 8);
+    let { octet, bit } = getPrefixcOctetAndBit(i);
+    bit = 7 - bit;
 
 
     mask[0] = 1 << bit;
@@ -29,11 +29,11 @@ function incrementAddress(ip, minprefix, maxprefix) {
 }
 
 function allocateRemaning(isp, toAllocate, curAddress, curPrefix, name = "free") {
-  let octet, bit, mask = new Uint8Array(1);
+  let mask = new Uint8Array(1);
 
   while (curPrefix > isp.prefix) {
-    octet = Math.floor((curPrefix - 1) / 8);
-    bit = 7 - ((curPrefix - 1) - octet * 8);
+    let { octet, bit } = getPrefixcOctetAndBit(curPrefix);
+    bit = 7 - bit;
     mask = 1 << bit;
 
 
@@ -73,11 +73,4 @@ export function allocateAddresses(isp) {
       throw new Error("Can't allocate ip");
   }
   throw new Error("Failed to allocate ips");
-}
-
-
-
-export function allocateSubnets(isp) {
-  console.log("Deprecated");
-  return allocateAddresses(isp);
 }
