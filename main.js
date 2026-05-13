@@ -72,6 +72,10 @@ const modalBroadcast = document.getElementById("modalBroadcast");
 const modalPrefix = document.getElementById("modalPrefix");
 const modalSubnetMask = document.getElementById("modalsubnetmask");
 const modalWildcardMask = document.getElementById("modalwildcardmask");
+const modalUsableHosts = document.getElementById("modalUHosts");
+const modalIPAddress = document.getElementById("modalIPAddress");
+
+
 
 
 closeModalBtn.addEventListener("click", () => {
@@ -173,11 +177,14 @@ function renderVisualization(totalAddresses, subnets) {
 
     box.addEventListener("click", () => {
       modalTitle.textContent = subnet.name;
+      modalIPAddress.textContent = subnet.ipAddressToString();
+      modalUsableHosts.textContent = subnet.getTotalAvailableHosts();
+      modalPrefix.textContent = "/" + subnet.prefix;
       modalNetwork.textContent = subnet.getNetworkAddress();
       modalBroadcast.textContent = subnet.getBroadcastAddress();
-      modalPrefix.textContent = "/" + subnet.prefix;
       modalSubnetMask.textContent = subnet.getNetMask();
       modalWildcardMask.textContent = subnet.getWildcardMask();
+
 
 
       modalOverlay.classList.remove("hidden");
