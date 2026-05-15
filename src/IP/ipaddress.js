@@ -1,8 +1,13 @@
+import { IPV4_BITS, BINARY_BASE } from "../Utils/network.js"
+
 /*
 * This class is meant to work as an ip but also a subnet, it has a
 * member called subnets which should contain ipaddress with prefix only until allocated.
 */
 const LENGTH_OF_8BIT_BYTE = 8;
+export const MAX_OCTET_VALUE = 255;
+export const MAX_OCTETS = 4;
+export const RESERVVED_ADDRESSES = 2;
 
 export function createAddressWithPrefix(prefix) {
   let ip = new ipAddress();
@@ -23,11 +28,11 @@ export class ipAddress {
 
   // Meant to fill the ip from an Uint8Array and a prefix.
   ipAddressFromArray(arr, prefix) {
-    if (arr.length !== 4) // If there isn't 4 octets it not an ip
+    if (arr.length !== MAX_OCTETS) // If there isn't 4 octets it not an ip
       throw new Error(`Invalid IP ${arr}`);
     this.octetsArray = new Uint8Array(arr);
 
-    if (isNaN(prefix) || prefix < 0 || prefix > 32) // Makes sure that the prefix is in the proper range
+    if (isNaN(prefix) || prefix < 0 || prefix > IPV4_BITS) // Makes sure that the prefix is in the proper range
       throw new Error(`CIDR can range from 0 to 32, the ip as a CIDR of ${prefix}`);
     this.prefix = prefix;
   }
@@ -38,13 +43,13 @@ export class ipAddress {
 
     if (elements.length === 2) { // Checks if it is CIDR notation
       this.prefix = Number(elements[1]);
-      if (isNaN(this.prefix) || this.prefix < 0 || this.prefix > 32) { // Makes sure that the prefix is in the proper range
+      if (isNaN(this.prefix) || this.prefix < 0 || this.prefix > IPV4_BITS) { // Makes sure that the prefix is in the proper range
         throw new Error(`CIDR can range from 0 to 32, the ip as a CIDR of ${elements[1]}`);
       }
 
 
       let octetsStrArr = elements[0].split("."); // Splits the ip string into octet strings
-      if (octetsStrArr.length !== 4) { // If there isn't 4 octets it not an ip
+      if (octetsStrArr.length !== MAX_OCTETS) { // If there isn't 4 octets it not an ip
         throw new Error(`Missing octets in ip`);
       }
 
@@ -55,7 +60,7 @@ export class ipAddress {
           throw new Error(`Ip has inappropiate characters in it`);
         }
 
-        if (j > 255 || j < 0) { // Makes sure the octet is in a valid range
+        if (j > MAX_OCTET_VALUE || j < 0) { // Makes sure the octet is in a valid range
           throw new Error(`Invalid range on octet ${j}`);
         }
 
@@ -71,14 +76,14 @@ export class ipAddress {
 
   // Meant to print the ip to string
   ipAddressToString() {
-    if (!this.octetsArray && this.octetsArray.length !== 4)
+    if (!this.octetsArray && this.octetsArray.length !== MAX_OCTETS)
       throw new Error("Array is undefined or Elements are missing in the array");
 
     // Prints string with template literal string
     return `${this.octetsArray[0]}.${this.octetsArray[1]}.${this.octetsArray[2]}.${this.octetsArray[3]}/${this.prefix}`;
   }
   ipAddressToBinaryString() {
-    if (!this.octetsArray && this.octetsArray.length !== 4)
+    if (!this.octetsArray && this.octetsArray.length !== MAX_OCTETS)
       throw new Error("Array is undefined or Elements are missing in the array");
 
     // Prints string with template literal string
@@ -88,11 +93,11 @@ export class ipAddress {
 
   // First ip
   getNetworkAddressArr() {
-    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+    if (this.octetsArray.length !== MAX_OCTETS)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let networkAddress = new Uint8Array(this.octetsArray);
-    let mask = new Uint8Array([255]);
+    let mask = new Uint8Array([MAX_OCTET_VALUE]);
 
     let { octet, bit } = getPrefixcOctetAndBit(this.prefix);
     bit = 7 - bit;
@@ -109,7 +114,7 @@ export class ipAddress {
     return networkAddress;
   }
   getNetworkAddress() {
-    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+    if (this.octetsArray.length !== MAX_OCTETS)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let networkAddress = this.getNetworkAddressArr();
@@ -118,14 +123,14 @@ export class ipAddress {
 
   // Last ip
   getBroadcastAddressArr() {
-    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+    if (this.octetsArray.length !== MAX_OCTETS)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let broadcastAddress = new Uint8Array(this.octetsArray);
 
     let { octet, bit } = getPrefixcOctetAndBit(this.prefix);
     bit++;
-    let mask = new Uint8Array([255]);
+    let mask = new Uint8Array([MAX_OCTET_VALUE]);
     mask[0] = mask[0] >>> bit;
 
 
@@ -134,12 +139,12 @@ export class ipAddress {
 
     // Sets the remaning octets to 255 (11111111)
     for (let index = octet + 1; index < broadcastAddress.length; index++)
-      broadcastAddress[index] = 255;
+      broadcastAddress[index] = MAX_OCTET_VALUE;
 
     return broadcastAddress;
   }
   getBroadcastAddress() {
-    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+    if (this.octetsArray.length !== MAX_OCTETS)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let broadcastAddress = this.getBroadcastAddressArr();
@@ -152,14 +157,14 @@ export class ipAddress {
     let { octet, bit } = getPrefixcOctetAndBit(this.prefix);
     bit = 7 - bit;
 
-    nMask[octet] = 255 << bit;
+    nMask[octet] = MAX_OCTET_VALUE << bit;
     for (let index = 0; index < octet; index++)
-      nMask[index] = 255;
+      nMask[index] = MAX_OCTET_VALUE;
 
     return nMask;
   }
   getNetMask() {
-    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+    if (this.octetsArray.length !== MAX_OCTETS)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let nMask = this.getNetMaskArr();
@@ -175,7 +180,7 @@ export class ipAddress {
     return wcMask;
   }
   getWildcardMask() {
-    if (this.octetsArray.length !== 4)  // If there isn't 4 octets it not an ip
+    if (this.octetsArray.length !== MAX_OCTETS)  // If there isn't 4 octets it not an ip
       throw new Error("Array is undefined or Elements are missing in the array");
 
     let wcMask = this.getWildcardMaskArr();
@@ -186,10 +191,10 @@ export class ipAddress {
 
   // gets the total amount of usable hosts
   getTotalAvailableHosts() {
-    return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
+    return Math.pow(BINARY_BASE, (IPV4_BITS - this.prefix)) - RESERVVED_ADDRESSES; // - 2 to account for the broadcast and the network address
   }
   getTotalAddresses() {
-    return Math.pow(2, (32 - this.prefix)) - 2; // - 2 to account for the broadcast and the network address
+    return Math.pow(BINARY_BASE, (IPV4_BITS - this.prefix)) - RESERVVED_ADDRESSES; // - 2 to account for the broadcast and the network address
   }
 
   // Set the name of the ip, incase there is a name;
