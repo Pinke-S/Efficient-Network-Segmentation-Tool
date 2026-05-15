@@ -211,31 +211,4 @@ export class ipAddress {
     else
       this.subnets.sort(cmpfunc);
   }
-
-  // Add a singular subnet
-  addSubnet(subnet) {
-    console.log("Deprecated");
-
-    this.subnets.push(new ipAddress());
-    this.subnets[this.subnets.length - 1].copyIp(subnet);
-  }
-
-  // Adds an array of subnets
-  addSubnets(subnetarr) {
-    console.log("Deprecated");
-
-    subnetarr.forEach(element => {
-      this.addSubnet(element);
-    });
-  }
-
-  // Meant to easily copy ip addresses and prevent doing it by refrence.
-  copyIp(ipToCopy) {
-    console.log("Deprecated");
-
-    this.name = new String(ipToCopy.String);
-    this.octetsArray = new Uint8Array(ipToCopy.octetsArray);
-    this.prefix = ipToCopy.prefix;
-    this.subnets = new Array(ipToCopy.subnet);
-  }
 }

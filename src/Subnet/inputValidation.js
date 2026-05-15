@@ -58,8 +58,8 @@ export function validateSubnetAllocation(IP, subnetForm) {
         }
 
     });
-    console.log(totalRequired);
-    console.log(getTotalAdresses(prefix));
+    // console.log(totalRequired);
+    // console.log(getTotalAdresses(prefix));
 
     if (totalRequired > getTotalAdresses(prefix)) {
         throw new Error('The number of requested addresses exceed available addresses');
