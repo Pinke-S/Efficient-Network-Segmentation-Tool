@@ -132,9 +132,6 @@ retrieveBtn.addEventListener("click", async () => {
 
   const data = await getAllocation(fileInput.files);
 
-  console.log(data);
-  console.log(data[0]);
-  console.log(data[0].octetsArray);
   latestAllocatedSubnets = data;
 
   const totalAddresses = data.reduce(
@@ -143,6 +140,14 @@ retrieveBtn.addEventListener("click", async () => {
   );
 
   renderVisualization(totalAddresses, data);
+  downloadBtn.disabled = false;
+  downloadJsonBtn.disabled = false;
+
+  downloadBtn.style.backgroundColor = "";
+  downloadBtn.style.cursor = "pointer";
+
+  downloadJsonBtn.style.backgroundColor = "";
+  downloadJsonBtn.style.cursor = "pointer";
 
 });
 

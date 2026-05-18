@@ -3,6 +3,7 @@ import autoTable from "jspdf-autotable";
 import { ipAddress } from "../IP/ipaddress.js";
 
 export function exportAllocation(subnets) {
+
   const doc = new jsPDF();
 
   doc.setFontSize(18);
@@ -11,22 +12,39 @@ export function exportAllocation(subnets) {
   const now = new Date();
 
   doc.setFontSize(10);
+
   doc.text(`Date: ${now.toLocaleDateString()}`, 14, 28);
+
   doc.text(
-    `Time: ${now.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`,
-    14,
-    34
+      `Time: ${now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`,
+      14,
+      34
   );
 
   autoTable(doc, {
+
     startY: 40,
-    head: [["Name", "Hosts", "CIDR", "Network Address", "Broadcast Address"]],
+
+    head: [[
+      "Name",
+      "Hosts",
+      "CIDR",
+      "Network Address",
+      "Broadcast Address"
+    ]],
+
     body: subnets.map((subnet) => {
+
       const ip = new ipAddress();
-      ip.ipAddressFromArray(subnet.octetsArray, subnet.prefix);
+
+      const octets = Array.isArray(subnet.octetsArray)
+          ? subnet.octetsArray
+          : Object.values(subnet.octetsArray);
+
+      ip.ipAddressFromArray(octets, subnet.prefix);
 
       return [
         subnet.name,
@@ -35,6 +53,7 @@ export function exportAllocation(subnets) {
         ip.getNetworkAddress(),
         ip.getBroadcastAddress(),
       ];
+
     }),
   });
 
