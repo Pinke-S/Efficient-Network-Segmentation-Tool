@@ -41,6 +41,12 @@
 
       <input type="submit" value="Calculate" id="subnetApplyButton_id" />
       <button id="download">Download PDF</button>
+      <button id="exportJSON" type = "button">Export JSON</button>
+      <label>Import JSON</label>
+      <input type = file accept = ".json" id="filePush">
+      <button id="retrieve" type = "button">Retrieve Allocation</button>
+
+
     </form>
     <div id="visualization"></div>
     <div id="modalOverlay" class="hidden">
@@ -56,7 +62,5 @@
     </div>
   </body>
   <script type="module" src="main.js"></script>
-
-</body>
 
 </html>

@@ -22,6 +22,7 @@
   "dependencies": {
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
+    "nanoid": "^5.1.11",
     "vite": "^5.2.0"
   }
 }

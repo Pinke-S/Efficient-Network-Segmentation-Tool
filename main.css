@@ -111,9 +111,36 @@ legend {
 .subnetRow input[type="number"] {
   width: 90px;
 }
+#fileUpload {
+  display: none;
+}
 
+.uploadButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 30px;
+
+
+  background: #3b82f6;
+  color: white;
+
+  border-radius: 10px;
+  cursor: pointer;
+
+  font-family: sans-serif;
+  text-align: center;
+
+  transition: 0.2s;
+}
+
+.uploadButton:hover {
+  background: #2563eb;
+}
 /* Submit button */
-#subnetApplyButton_id,#download {
+#subnetApplyButton_id,#download, #getSubnetBtn,  #exportJSON, #getSubnetInput, #retrieve {
   margin-top: 1rem;
   padding: 0.6rem;
 

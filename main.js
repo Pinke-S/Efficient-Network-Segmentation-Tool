@@ -1,5 +1,6 @@
 import { getTotalAdresses } from "./src/Utils/network.js";
 import { exportAllocation } from "./src/Utils/export.js";
+import {uploadAllocation, getAllocation} from "./src/retrieveAllocation.js"
 
 import {
   getFormRows,
@@ -104,8 +105,11 @@ form.addEventListener("submit", (e) => {
     const allocatedSubnets = allocateAddresses(isp);
     latestAllocatedSubnets = allocatedSubnets;
     downloadBtn.disabled = false;
+    downloadJsonBtn.disabled = false;
     downloadBtn.style.backgroundColor = "";
     downloadBtn.style.cursor = "pointer";
+    downloadJsonBtn.style.backgroundColor = "";
+    downloadJsonBtn.style.cursor = "pointer";
 
     const totalAddresses = getTotalAdresses(isp.prefix);
 
@@ -119,9 +123,37 @@ form.addEventListener("submit", (e) => {
 /* pdf export */
 
 const downloadBtn = document.getElementById("download");
+const downloadJsonBtn = document.getElementById("exportJSON");
+const retrieveBtn = document.getElementById("retrieve");
+const  fileInput = document.getElementById("filePush");
+
+downloadJsonBtn.addEventListener("click", () => {uploadAllocation(latestAllocatedSubnets);})
+retrieveBtn.addEventListener("click", async () => {
+
+  const data = await getAllocation(fileInput.files);
+
+  console.log(data);
+  console.log(data[0]);
+  console.log(data[0].octetsArray);
+  latestAllocatedSubnets = data;
+
+  const totalAddresses = data.reduce(
+      (sum, subnet) => sum + subnet.nextPowerOfTwo,
+      0
+  );
+
+  renderVisualization(totalAddresses, data);
+
+});
+
+
 downloadBtn.disabled = true;
+downloadJsonBtn.disabled = true;
 downloadBtn.style.backgroundColor = "#777";
 downloadBtn.style.cursor = "not-allowed";
+downloadJsonBtn.style.backgroundColor = "";
+downloadJsonBtn.style.cursor = "not-allowed";
+downloadJsonBtn.style.backgroundColor = "#777";
 
 if (downloadBtn) {
   downloadBtn.addEventListener("click", () => {
@@ -133,6 +165,11 @@ if (downloadBtn) {
     exportAllocation(latestAllocatedSubnets);
   });
 }
+
+
+
+
+
 
 /* visual bar */
 
@@ -187,8 +224,10 @@ function renderVisualization(totalAddresses, subnets) {
 /* kopi af værdien i arrayet.*/
 
 function subnetToIpAddress(subnet) {
+
   const ip = new ipAddress();
-  ip.ipAddressFromArray(subnet.octetsArray, subnet.prefix);
+  const octets = Object.values(subnet.octetsArray);
+  ip.ipAddressFromArray(octets, subnet.prefix);
   ip.name = subnet.name;
   return ip;
 }
