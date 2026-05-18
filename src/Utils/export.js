@@ -2,7 +2,8 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { ipAddress } from "../IP/ipaddress.js";
 
-export function exportAllocation(isp, subnets) {
+export function exportAllocation(subnets) {
+
   const doc = new jsPDF();
 
   doc.setFont(doc.getFont().fontName, "bold");
@@ -13,14 +14,16 @@ export function exportAllocation(isp, subnets) {
   const now = new Date();
 
   doc.setFontSize(10);
+
   doc.text(`Date: ${now.toLocaleDateString()}`, 14, 28);
+
   doc.text(
-    `Time: ${now.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`,
-    14,
-    34
+      `Time: ${now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`,
+      14,
+      34
   );
 
   doc.setFont(doc.getFont().fontName, "italic");
@@ -29,9 +32,27 @@ export function exportAllocation(isp, subnets) {
   doc.setFont(doc.getFont().fontName, "normal");
 
   autoTable(doc, {
-    startY: 46,
-    head: [["Name", "Hosts", "CIDR", "Network Address", "Broadcast Address", "Subnet Mask", "Wildcard Mask"]],
+
+    startY: 40,
+
+    head: [[
+      "Name",
+      "Hosts",
+      "CIDR",
+      "Network Address",
+      "Broadcast Address"
+    ]],
+
     body: subnets.map((subnet) => {
+
+      const ip = new ipAddress();
+
+      const octets = Array.isArray(subnet.octetsArray)
+          ? subnet.octetsArray
+          : Object.values(subnet.octetsArray);
+
+      ip.ipAddressFromArray(octets, subnet.prefix);
+
       return [
         subnet.name,
         2 ** (32 - subnet.prefix) - 2,
@@ -41,6 +62,7 @@ export function exportAllocation(isp, subnets) {
         subnet.getNetMask(),
         subnet.getWildcardMask(),
       ];
+
     }),
   });
 

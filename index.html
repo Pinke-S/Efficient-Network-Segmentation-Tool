@@ -1,20 +1,19 @@
 <!doctype html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-  <link rel="stylesheet" href="main.css" />
-  <script type="module" src="main.js"></script>
+      <input type="submit" value="Calculate" id="subnetApplyButton_id" />
+      <button id="download" type ="button">Download PDF</button>
+      <button id="exportJSON" type = "button">Export JSON</button>
+      <label>Import JSON</label>
+      <input type = file accept = ".json" id="filePush">
+      <button id="retrieve" type = "button">Retrieve Allocation</button>
 
-  <title>Efficient Network Segmentation Tool</title>
-</head>
 
-<body>
-  <form id="subnetForm">
-    <h2>Network Segmentation Tool</h2>
+    </form>
+    <div id="visualization"></div>
+    <div id="modalOverlay" class="hidden">
+      <div id="modal">
+        <h3 id="modalTitle">Subnet Info</h3>
 
     <!-- ISP INPUT -->
     <label for="ipInput_id">ISP Network</label>
@@ -62,7 +61,5 @@
   </div>
 </body>
 <script type="module" src="main.js"></script>
-
-</body>
 
 </html>
