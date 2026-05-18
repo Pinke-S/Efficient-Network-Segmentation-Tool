@@ -1,9 +1,7 @@
-import { jsPDF } from "jspdf";
+import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { ipAddress } from "../IP/ipaddress.js";
 
-export function exportAllocation(subnets) {
-
+export function exportAllocation(isp, subnets) {
   const doc = new jsPDF();
 
   doc.setFont(doc.getFont().fontName, "bold");
@@ -14,9 +12,7 @@ export function exportAllocation(subnets) {
   const now = new Date();
 
   doc.setFontSize(10);
-
   doc.text(`Date: ${now.toLocaleDateString()}`, 14, 28);
-
   doc.text(
       `Time: ${now.toLocaleTimeString([], {
         hour: "2-digit",
@@ -26,44 +22,35 @@ export function exportAllocation(subnets) {
       34
   );
 
+  const ispText =
+      isp && typeof isp.ipAddressToString === "function"
+          ? isp.ipAddressToString()
+          : "Unknown";
+
   doc.setFont(doc.getFont().fontName, "italic");
-  doc.setFontSize(10);
-  doc.text(`\nISP Address: ${isp.ipAddressToString()}`, 14, 40);
+  doc.text(`ISP Address: ${ispText}`, 14, 40);
   doc.setFont(doc.getFont().fontName, "normal");
 
   autoTable(doc, {
-
-    startY: 40,
-
+    startY: 48,
     head: [[
       "Name",
       "Hosts",
       "CIDR",
       "Network Address",
-      "Broadcast Address"
+      "Broadcast Address",
+      "Subnet Mask",
+      "Wildcard Mask",
     ]],
-
-    body: subnets.map((subnet) => {
-
-      const ip = new ipAddress();
-
-      const octets = Array.isArray(subnet.octetsArray)
-          ? subnet.octetsArray
-          : Object.values(subnet.octetsArray);
-
-      ip.ipAddressFromArray(octets, subnet.prefix);
-
-      return [
-        subnet.name,
-        2 ** (32 - subnet.prefix) - 2,
-        "/" + subnet.prefix,
-        subnet.getNetworkAddress(),
-        subnet.getBroadcastAddress(),
-        subnet.getNetMask(),
-        subnet.getWildcardMask(),
-      ];
-
-    }),
+    body: subnets.map((subnet) => [
+      subnet.name,
+      2 ** (32 - subnet.prefix) - 2,
+      "/" + subnet.prefix,
+      subnet.getNetworkAddress(),
+      subnet.getBroadcastAddress(),
+      subnet.getNetMask(),
+      subnet.getWildcardMask(),
+    ]),
   });
 
   doc.save("network-allocation.pdf");

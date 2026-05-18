@@ -7,6 +7,8 @@ import {
   sortAllocationRequest,
 } from "./src/Subnet/parsing.js";
 
+import "./main.css";
+
 import { validateSubnetAllocation } from "./src/Subnet/inputValidation.js";
 import { allocateAddresses } from "./src/Subnet/PAA.js";
 import { ipAddress } from "./src/IP/ipaddress.js";
@@ -148,14 +150,32 @@ retrieveBtn.addEventListener("click", async () => {
 
   const data = await getAllocation(fileInput.files);
 
-  latestAllocatedSubnets = data;
+  const reconstructedSubnets = data.map((subnetData) => {
 
-  const totalAddresses = data.reduce(
-      (sum, subnet) => sum + subnet.nextPowerOfTwo,
+    const subnet = new ipAddress();
+
+    const octets = Array.isArray(subnetData.octetsArray)
+        ? subnetData.octetsArray
+        : Object.values(subnetData.octetsArray);
+
+    subnet.ipAddressFromArray(octets, subnetData.prefix);
+
+    subnet.name = subnetData.name;
+    subnet.hostRequirement = subnetData.hostRequirement;
+    subnet.nextPowerOfTwo = subnetData.nextPowerOfTwo;
+
+    return subnet;
+  });
+
+  latestAllocatedSubnets = reconstructedSubnets;
+
+  const totalAddresses = reconstructedSubnets.reduce(
+      (sum, subnet) => sum + subnet.getTotalAddresses(),
       0
   );
 
-  renderVisualization(totalAddresses, data);
+  renderVisualization(totalAddresses, reconstructedSubnets);
+
   downloadBtn.disabled = false;
   downloadJsonBtn.disabled = false;
 
@@ -164,7 +184,6 @@ retrieveBtn.addEventListener("click", async () => {
 
   downloadJsonBtn.style.backgroundColor = "";
   downloadJsonBtn.style.cursor = "pointer";
-
 });
 
 
