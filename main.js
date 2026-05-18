@@ -16,8 +16,9 @@ import { ipAddress } from "./src/IP/ipaddress.js";
 ========================= */
 
 let latestAllocatedSubnets = [];
+let latestIP;
 
-/* add subnet row*/ 
+/* add subnet row*/
 
 const addButton = document.getElementById("addSubnetButton_id");
 const subnetContainer = document.querySelector(".subnetBlock");
@@ -70,6 +71,13 @@ const modalTitle = document.getElementById("modalTitle");
 const modalNetwork = document.getElementById("modalNetwork");
 const modalBroadcast = document.getElementById("modalBroadcast");
 const modalPrefix = document.getElementById("modalPrefix");
+const modalSubnetMask = document.getElementById("modalsubnetmask");
+const modalWildcardMask = document.getElementById("modalwildcardmask");
+const modalUsableHosts = document.getElementById("modalUHosts");
+const modalIPAddress = document.getElementById("modalIPAddress");
+
+
+
 
 closeModalBtn.addEventListener("click", () => {
   modalOverlay.classList.add("hidden");
@@ -100,10 +108,17 @@ form.addEventListener("submit", (e) => {
     const subnets = getFormRows(form);
     sortAllocationRequest(subnets);
 
-    isp.subnets = subnets;
+    subnets.forEach((subnet) => {
+      let i = new ipAddress();
+      i.name = subnet.name;
+      i.prefix = subnet.prefix;
+      isp.subnets.push(i);
+    })
+
 
     const allocatedSubnets = allocateAddresses(isp);
     latestAllocatedSubnets = allocatedSubnets;
+    latestIP = isp;
     downloadBtn.disabled = false;
     downloadJsonBtn.disabled = false;
     downloadBtn.style.backgroundColor = "";
@@ -113,7 +128,8 @@ form.addEventListener("submit", (e) => {
 
     const totalAddresses = getTotalAdresses(isp.prefix);
 
-    renderVisualization(totalAddresses, allocatedSubnets);
+
+    renderVisualization(totalAddresses, isp.subnets);
   } catch (err) {
     console.error(err);
     alert(err.message);
@@ -167,7 +183,7 @@ if (downloadBtn) {
       return;
     }
 
-    exportAllocation(latestAllocatedSubnets);
+    exportAllocation(latestIP, latestAllocatedSubnets);
   });
 }
 
@@ -188,40 +204,48 @@ function renderVisualization(totalAddresses, subnets) {
   let colorsUsed = [];
 
   subnets.forEach((subnet) => {
-    const size = subnet.nextPowerOfTwo;
+    const size = subnet.getTotalAddresses();
 
     const box = document.createElement("div");
     box.classList.add("subnetBox");
 
     box.style.flex = size;
-    box.style.backgroundColor = getRandomColor(colorsUsed);
-
-    const subnetIp = subnetToIpAddress(subnet);
+    if (subnet.name !== "free")
+      box.style.backgroundColor = getRandomColor(colorsUsed);
+    else
+      box.style.backgroundColor = "#444";
 
     box.textContent = `${subnet.name} /${subnet.prefix}`;
 
     box.addEventListener("click", () => {
       modalTitle.textContent = subnet.name;
-      modalNetwork.textContent = subnetIp.getNetworkAddress();
-      modalBroadcast.textContent = subnetIp.getBroadcastAddress();
+      modalIPAddress.textContent = subnet.ipAddressToString();
+      modalUsableHosts.textContent = subnet.getTotalAvailableHosts();
       modalPrefix.textContent = "/" + subnet.prefix;
+      modalNetwork.textContent = subnet.getNetworkAddress();
+      modalBroadcast.textContent = subnet.getBroadcastAddress();
+      modalSubnetMask.textContent = subnet.getNetMask();
+      modalWildcardMask.textContent = subnet.getWildcardMask();
+
+
 
       modalOverlay.classList.remove("hidden");
     });
 
     bar.appendChild(box);
     used += size;
-  });
-
-  if (used < totalAddresses) {
-    const free = document.createElement("div");
-    free.classList.add("subnetBox");
-    free.style.flex = totalAddresses - used;
-    free.style.backgroundColor = "#444";
-    free.textContent = "Free";
-
-    bar.appendChild(free);
   }
+  );
+
+  // if (used < totalAddresses) {
+  //   const free = document.createElement("div");
+  //   free.classList.add("subnetBox");
+  //   free.style.flex = totalAddresses - used;
+  //   free.style.backgroundColor = "#444";
+  //   free.textContent = "Free";
+
+  //   bar.appendChild(free);
+  // }
 
   visualization.appendChild(bar);
 }

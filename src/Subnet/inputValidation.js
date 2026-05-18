@@ -3,8 +3,8 @@
 
 // Har alle fælter gyldige karakter?
 
-import {Subnet} from "./parsing.js";
-import {getNextPowerOfTwo, getPrefix, getTotalAdresses} from "../Utils/network.js";
+import { Subnet } from "./parsing.js";
+import { getNextPowerOfTwo, getPrefix, getTotalAdresses } from "../Utils/network.js";
 
 function isValidIP(ipAddress) {
     let ip = ipAddress.split("/")[0];
@@ -12,6 +12,8 @@ function isValidIP(ipAddress) {
 
     // Tjek om der er 4 dele
     if (parts.length !== 4) {
+        throw new Error("ISP IP is invalid");
+
         return false;
     }
 
@@ -34,7 +36,9 @@ function isValidIP(ipAddress) {
     return true;
 }
 
-export function validateSubnetAllocation(IP,subnetForm) {
+export function validateSubnetAllocation(IP, subnetForm) {
+    if (!IP)
+        throw new Error("No ISP IP provided");
 
     let prefix = getPrefix(IP);
 
@@ -49,15 +53,15 @@ export function validateSubnetAllocation(IP,subnetForm) {
     rows.forEach(row => {
         const hosts = Number(row.querySelector('[name="hosts"]').value);
         totalRequired += getNextPowerOfTwo(hosts);
-        if(hosts === 0){
+        if (hosts === 0) {
             throw new Error("Empty host requirement");
         }
 
     });
-    console.log(totalRequired);
-    console.log( getTotalAdresses(prefix));
+    // console.log(totalRequired);
+    // console.log(getTotalAdresses(prefix));
 
-    if( totalRequired > getTotalAdresses(prefix) ){
+    if (totalRequired > getTotalAdresses(prefix)) {
         throw new Error('The number of requested addresses exceed available addresses');
     }
 
@@ -65,4 +69,3 @@ export function validateSubnetAllocation(IP,subnetForm) {
 
 
 }
-

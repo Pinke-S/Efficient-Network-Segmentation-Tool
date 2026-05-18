@@ -4,7 +4,7 @@ export const BINARY_BASE = 2;
 
 export function getPrefix(ipAddress) {
     const parts = ipAddress.split('/');
-    console.log(parts[1]);
+    // console.log(parts[1]);
     return Number(parts[1]);
 }
 
@@ -19,4 +19,4 @@ export function getTotalAdresses(prefix) {
 export function getNextPowerOfTwo(hostRequirement) {
     const requestedAddresses = hostRequirement + 2;
     return BINARY_BASE ** Math.ceil(Math.log2(requestedAddresses));
-} 
+}

@@ -6,8 +6,10 @@ export function exportAllocation(subnets) {
 
   const doc = new jsPDF();
 
+  doc.setFont(doc.getFont().fontName, "bold");
   doc.setFontSize(18);
   doc.text("Network Allocation", 14, 20);
+  doc.setFont(doc.getFont().fontName, "normal");
 
   const now = new Date();
 
@@ -23,6 +25,11 @@ export function exportAllocation(subnets) {
       14,
       34
   );
+
+  doc.setFont(doc.getFont().fontName, "italic");
+  doc.setFontSize(10);
+  doc.text(`\nISP Address: ${isp.ipAddressToString()}`, 14, 40);
+  doc.setFont(doc.getFont().fontName, "normal");
 
   autoTable(doc, {
 
@@ -48,10 +55,12 @@ export function exportAllocation(subnets) {
 
       return [
         subnet.name,
-        subnet.hostRequirement,
+        2 ** (32 - subnet.prefix) - 2,
         "/" + subnet.prefix,
-        ip.getNetworkAddress(),
-        ip.getBroadcastAddress(),
+        subnet.getNetworkAddress(),
+        subnet.getBroadcastAddress(),
+        subnet.getNetMask(),
+        subnet.getWildcardMask(),
       ];
 
     }),

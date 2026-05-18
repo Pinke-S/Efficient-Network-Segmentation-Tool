@@ -5,6 +5,7 @@
   "license": "ISC",
   "author": "cs-26-dat-2-03",
   "type": "module",
+  "homepage": "https://pinke-s.github.io/Efficient-Network-Segmentation-Tool/",
   "exports": {
     "./ipAddresse": [
       "./src/IP/ipaddress.js"
@@ -16,6 +17,8 @@
   "scripts": {
     "test": "node src/test.js",
     "dev": "vite",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "build": "vite build",
     "preview": "vite preview"
   },

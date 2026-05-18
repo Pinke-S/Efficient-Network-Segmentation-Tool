@@ -1,43 +1,5 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <link rel="stylesheet" href="main.css" />
-    <script type="module" src="main.js"></script>
-
-    <title>Efficient Network Segmentation Tool</title>
-  </head>
-
-  <body>
-    <form id="subnetForm">
-      <h2>Network Segmentation Tool</h2>
-
-      <!-- ISP INPUT -->
-      <label for="ipInput_id">ISP Network</label>
-      <input type="text" id="ipInput_id" placeholder="192.168.1.0/24" />
-
-      <!-- CREATE SUBNETS -->
-      <fieldset class="subnetEntries_class">
-        <legend>
-          Subnets
-          <input type="button" value="+ Add" id="addSubnetButton_id" />
-        </legend>
-
-        <!-- SUBNET -->
-        <div class="subnetBlock">
-          <label>Name</label>
-          <label>Hosts</label>
-
-          <div class="subnetRow">
-            <input type="text" name="subnet" placeholder="HQ" />
-            <input type="number" name="hosts" placeholder="50" min="1" />
-            <button type="button" class="removeBtn">✕</button>
-          </div>
-        </div>
-      </fieldset>
 
       <input type="submit" value="Calculate" id="subnetApplyButton_id" />
       <button id="download" type ="button">Download PDF</button>
@@ -53,14 +15,51 @@
       <div id="modal">
         <h3 id="modalTitle">Subnet Info</h3>
 
-        <p><strong>Network:</strong> <span id="modalNetwork"></span></p>
-        <p><strong>Broadcast:</strong> <span id="modalBroadcast"></span></p>
-        <p><strong>Prefix:</strong> <span id="modalPrefix"></span></p>
+    <!-- ISP INPUT -->
+    <label for="ipInput_id">ISP Network</label>
+    <input type="text" id="ipInput_id" placeholder="192.168.1.0/24" />
 
-        <button id="closeModalBtn">Close</button>
+    <!-- CREATE SUBNETS -->
+    <fieldset class="subnetEntries_class">
+      <legend>
+        Subnets
+        <input type="button" value="+ Add" id="addSubnetButton_id" />
+      </legend>
+
+      <!-- SUBNET -->
+      <div class="subnetBlock">
+        <label>Name</label>
+        <label>Hosts</label>
+
+        <div class="subnetRow">
+          <input type="text" name="subnet" placeholder="HQ" />
+          <input type="number" name="hosts" placeholder="50" min="1" />
+          <button type="button" class="removeBtn">✕</button>
+        </div>
       </div>
+    </fieldset>
+
+    <input type="submit" value="Calculate" id="subnetApplyButton_id" />
+    <button id="download">Download PDF</button>
+  </form>
+  <div id="visualization"></div>
+  <div id="modalOverlay" class="hidden">
+    <div id="modal">
+      <h3 id="modalTitle">Subnet Info</h3>
+
+      <p><strong>IP Address:</strong> <span id="modalIPAddress"></span></p>
+      <p><strong>Usable Hosts:</strong> <span id="modalUHosts"></span></p>
+      <p><strong>Prefix:</strong> <span id="modalPrefix"></span></p>
+      <p><strong>Network:</strong> <span id="modalNetwork"></span></p>
+      <p><strong>Broadcast:</strong> <span id="modalBroadcast"></span></p>
+      <p><strong>Subnet Mask:</strong> <span id="modalsubnetmask"></span></p>
+      <p><strong>Wildcard Mask:</strong> <span id="modalwildcardmask"></span></p>
+
+
+      <button id="closeModalBtn">Close</button>
     </div>
-  </body>
-  <script type="module" src="main.js"></script>
+  </div>
+</body>
+<script type="module" src="main.js"></script>
 
 </html>
