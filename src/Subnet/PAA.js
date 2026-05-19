@@ -19,7 +19,7 @@ function incrementAddress(ip, minprefix, maxprefix) {
 
     mask[0] = 1 << bit;
 
-    ip[octet] = ip[octet] ^ mask;
+    ip[octet] ^= mask;
     if (ip[octet] & mask)
       return 1; // Success
   }
