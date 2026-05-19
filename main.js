@@ -145,12 +145,37 @@ const downloadJsonBtn = document.getElementById("exportJSON");
 const retrieveBtn = document.getElementById("retrieve");
 const  fileInput = document.getElementById("filePush");
 
-downloadJsonBtn.addEventListener("click", () => {uploadAllocation(latestAllocatedSubnets);})
+downloadJsonBtn.addEventListener("click", () => {
+  uploadAllocation(
+      latestAllocatedSubnets,
+      "allocation",
+      latestIP
+  );
+});
 retrieveBtn.addEventListener("click", async () => {
 
-  const data = await getAllocation(fileInput.files);
 
-  const reconstructedSubnets = data.map((subnetData) => {
+
+
+  if(fileInput.files.length !== 1 ) {alert ('no file selected'); return;}
+  const { ISP, subnets } = await getAllocation(fileInput.files);
+  console.log(ISP);
+
+    // til at reconstruct isp root IP
+  const reconstructedISP = new ipAddress();
+
+  const ispOctets = Array.isArray(ISP.octetsArray)
+      ? ISP.octetsArray
+      : Object.values(ISP.octetsArray);
+  reconstructedISP.ipAddressFromArray(
+      ispOctets,
+      ISP.prefix
+  );
+
+  latestIP = reconstructedISP;
+
+  //reconstruct allokation data
+  const reconstructedSubnets = subnets.map((subnetData) => {
 
     const subnet = new ipAddress();
 
@@ -163,6 +188,7 @@ retrieveBtn.addEventListener("click", async () => {
     subnet.name = subnetData.name;
     subnet.hostRequirement = subnetData.hostRequirement;
     subnet.nextPowerOfTwo = subnetData.nextPowerOfTwo;
+    subnet.rootIP = reconstructedISP;
 
     return subnet;
   });
@@ -205,9 +231,6 @@ if (downloadBtn) {
     exportAllocation(latestIP, latestAllocatedSubnets);
   });
 }
-
-
-
 
 
 

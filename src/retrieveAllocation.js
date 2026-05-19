@@ -1,5 +1,11 @@
-export function uploadAllocation(subnets, filename = "allocation") {
-    const subnetAllocation = JSON.stringify(subnets, null, 2);
+export function uploadAllocation(subnets, filename, ISP) {
+
+    const allocationData = {
+        ISP,
+        subnets
+    };
+
+    const subnetAllocation = JSON.stringify(allocationData, null, 2);
 
     const blob = new Blob([subnetAllocation], {
         type: "application/json"
@@ -24,6 +30,7 @@ export async function getAllocation(files) {
 
     const text = await file.text();
 
-    return JSON.parse(text);
+    const { ISP, subnets } = JSON.parse(text);
 
+    return { ISP, subnets };
 }
