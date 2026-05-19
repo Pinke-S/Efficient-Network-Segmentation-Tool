@@ -8,6 +8,7 @@ const LENGTH_OF_8BIT_BYTE = 8;
 export const MAX_OCTET_VALUE = 255;
 export const MAX_OCTETS = 4;
 export const RESERVVED_ADDRESSES = 2;
+export const MAX_PREFIX_VALUE = 32;
 
 export function createAddressWithPrefix(prefix) {
   let ip = new ipAddress();
@@ -24,7 +25,6 @@ export function getPrefixcOctetAndBit(prefix) {
 export class ipAddress {
 
   constructor() { this.name = "", this.octetsArray = undefined, this.prefix = 0; this.subnets = [] }
-
 
   // Meant to fill the ip from an Uint8Array and a prefix.
   ipAddressFromArray(arr, prefix) {
@@ -43,7 +43,7 @@ export class ipAddress {
 
     if (elements.length === 2) { // Checks if it is CIDR notation
       this.prefix = Number(elements[1]);
-      if (isNaN(this.prefix) || this.prefix < 0 || this.prefix > IPV4_BITS) { // Makes sure that the prefix is in the proper range
+      if (isNaN(this.prefix) || this.prefix < 0 || this.prefix > MAX_PREFIX_VALUE) { // Makes sure that the prefix is in the proper range
         throw new Error(`CIDR can range from 0 to 32, the ip as a CIDR of ${elements[1]}`);
       }
 
@@ -105,7 +105,7 @@ export class ipAddress {
 
 
     // Sets the remaning bits in the octet with prefix to 0
-    networkAddress[octet] = networkAddress[octet] & mask[0];
+    networkAddress[octet] &= mask[0];
 
     // Sets the remaning octets to 0 (00000000)
     for (let index = octet + 1; index < networkAddress.length; index++)
@@ -135,7 +135,7 @@ export class ipAddress {
 
 
     // Sets the remaning bits in the octet with prefix to 1
-    broadcastAddress[octet] = broadcastAddress[octet] | mask[0];
+    broadcastAddress[octet] |= mask[0];
 
     // Sets the remaning octets to 255 (11111111)
     for (let index = octet + 1; index < broadcastAddress.length; index++)
@@ -194,7 +194,7 @@ export class ipAddress {
     return Math.pow(BINARY_BASE, (IPV4_BITS - this.prefix)) - RESERVVED_ADDRESSES; // - 2 to account for the broadcast and the network address
   }
   getTotalAddresses() {
-    return Math.pow(BINARY_BASE, (IPV4_BITS - this.prefix)) - RESERVVED_ADDRESSES; // - 2 to account for the broadcast and the network address
+    return Math.pow(BINARY_BASE, (IPV4_BITS - this.prefix));
   }
 
   // Set the name of the ip, incase there is a name;

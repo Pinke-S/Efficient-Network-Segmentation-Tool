@@ -1,13 +1,11 @@
 import { getTotalAdresses } from "./src/Utils/network.js";
 import { exportAllocation } from "./src/Utils/export.js";
-import {uploadAllocation, getAllocation} from "./src/retrieveAllocation.js"
+import { uploadAllocation, getAllocation } from "./src/retrieveAllocation.js"
 
 import {
   getFormRows,
   sortAllocationRequest,
 } from "./src/Subnet/parsing.js";
-
-import "./main.css";
 
 import { validateSubnetAllocation } from "./src/Subnet/inputValidation.js";
 import { allocateAddresses } from "./src/Subnet/PAA.js";
@@ -21,7 +19,6 @@ let latestAllocatedSubnets = [];
 let latestIP;
 
 /* add subnet row*/
-
 const addButton = document.getElementById("addSubnetButton_id");
 const subnetContainer = document.querySelector(".subnetBlock");
 
@@ -57,7 +54,6 @@ addButton.addEventListener("click", () => {
 });
 
 /* fjern row*/
-
 document.querySelectorAll(".removeBtn").forEach((btn) => {
   btn.addEventListener("click", (e) => {
     e.target.parentElement.remove();
@@ -65,7 +61,6 @@ document.querySelectorAll(".removeBtn").forEach((btn) => {
 });
 
 /* modal */
-
 const modalOverlay = document.getElementById("modalOverlay");
 const closeModalBtn = document.getElementById("closeModalBtn");
 
@@ -92,7 +87,6 @@ modalOverlay.addEventListener("click", (e) => {
 });
 
 /* submit form til backend */
-
 const form = document.getElementById("subnetForm");
 const visualization = document.getElementById("visualization");
 
@@ -117,10 +111,10 @@ form.addEventListener("submit", (e) => {
       isp.subnets.push(i);
     })
 
-
     const allocatedSubnets = allocateAddresses(isp);
     latestAllocatedSubnets = allocatedSubnets;
     latestIP = isp;
+
     downloadBtn.disabled = false;
     downloadJsonBtn.disabled = false;
     downloadBtn.style.backgroundColor = "";
@@ -139,37 +133,33 @@ form.addEventListener("submit", (e) => {
 });
 
 /* pdf export */
-
 const downloadBtn = document.getElementById("download");
 const downloadJsonBtn = document.getElementById("exportJSON");
 const retrieveBtn = document.getElementById("retrieve");
-const  fileInput = document.getElementById("filePush");
+const fileInput = document.getElementById("filePush");
 
 downloadJsonBtn.addEventListener("click", () => {
   uploadAllocation(
-      latestAllocatedSubnets,
-      "allocation",
-      latestIP
+    latestAllocatedSubnets,
+    "allocation",
+    latestIP
   );
 });
+
 retrieveBtn.addEventListener("click", async () => {
-
-
-
-
-  if(fileInput.files.length !== 1 ) {alert ('no file selected'); return;}
+  if (fileInput.files.length !== 1) { alert('no file selected'); return; }
   const { ISP, subnets } = await getAllocation(fileInput.files);
   console.log(ISP);
 
-    // til at reconstruct isp root IP
+  // til at reconstruct isp root IP
   const reconstructedISP = new ipAddress();
 
   const ispOctets = Array.isArray(ISP.octetsArray)
-      ? ISP.octetsArray
-      : Object.values(ISP.octetsArray);
+    ? ISP.octetsArray
+    : Object.values(ISP.octetsArray);
   reconstructedISP.ipAddressFromArray(
-      ispOctets,
-      ISP.prefix
+    ispOctets,
+    ISP.prefix
   );
 
   latestIP = reconstructedISP;
@@ -180,8 +170,8 @@ retrieveBtn.addEventListener("click", async () => {
     const subnet = new ipAddress();
 
     const octets = Array.isArray(subnetData.octetsArray)
-        ? subnetData.octetsArray
-        : Object.values(subnetData.octetsArray);
+      ? subnetData.octetsArray
+      : Object.values(subnetData.octetsArray);
 
     subnet.ipAddressFromArray(octets, subnetData.prefix);
 
@@ -196,8 +186,8 @@ retrieveBtn.addEventListener("click", async () => {
   latestAllocatedSubnets = reconstructedSubnets;
 
   const totalAddresses = reconstructedSubnets.reduce(
-      (sum, subnet) => sum + subnet.getTotalAddresses(),
-      0
+    (sum, subnet) => sum + subnet.getTotalAddresses(),
+    0
   );
 
   renderVisualization(totalAddresses, reconstructedSubnets);
@@ -235,14 +225,13 @@ if (downloadBtn) {
 
 
 /* visual bar */
-
 function renderVisualization(totalAddresses, subnets) {
   visualization.innerHTML = "";
 
   const bar = document.createElement("div");
   bar.classList.add("networkBar");
 
-  let used = 0;
+  // let used = 0;
   let colorsUsed = [];
 
   subnets.forEach((subnet) => {
@@ -275,7 +264,7 @@ function renderVisualization(totalAddresses, subnets) {
     });
 
     bar.appendChild(box);
-    used += size;
+    // used += size;
   }
   );
 

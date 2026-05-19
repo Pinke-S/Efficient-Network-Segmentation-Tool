@@ -31,6 +31,7 @@ function incrementAddress(ip, minprefix, maxprefix) {
 function allocateRemaning(isp, toAllocate, curAddress, curPrefix, name = "free") {
   let mask = new Uint8Array(1);
 
+
   while (curPrefix > isp.prefix) {
     let { octet, bit } = getPrefixcOctetAndBit(curPrefix);
     bit = 7 - bit;

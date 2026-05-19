@@ -111,6 +111,7 @@ legend {
 .subnetRow input[type="number"] {
   width: 90px;
 }
+
 #fileUpload {
   display: none;
 }
@@ -139,8 +140,14 @@ legend {
 .uploadButton:hover {
   background: #2563eb;
 }
-/* Submit button */
-#subnetApplyButton_id,#download, #getSubnetBtn,  #exportJSON, #getSubnetInput, #retrieve {
+
+/* buttons */
+#subnetApplyButton_id,
+#download,
+#getSubnetBtn,
+#exportJSON,
+#getSubnetInput,
+#retrieve {
   margin-top: 1rem;
   padding: 0.6rem;
 
@@ -210,16 +217,16 @@ legend {
   cursor: pointer;
 
   transition:
-          transform 0.15s ease,
-          opacity 0.15s ease,
-          box-shadow 0.15s ease,
-          filter 0.15s ease;
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
 }
 
 /* Hover effekt */
 .subnetBox:hover {
   box-shadow: 0 0 0 2px #fff inset,
-  0 0 12px rgba(0,0,0,0.5);
+    0 0 12px rgba(0, 0, 0, 0.5);
   filter: brightness(1.15);
 }
 

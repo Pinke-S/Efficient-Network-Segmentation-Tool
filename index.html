@@ -1,152 +1,131 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Efficient Network Segmentation Tool</title>
+    <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
 
-<form id="subnetForm">
+    <form id="subnetForm">
 
-    <!-- ISP INPUT -->
-    <label for="ipInput_id">ISP Network</label>
-    <input
-            type="text"
-            id="ipInput_id"
-            placeholder="192.168.1.0/24"
-    />
+        <!-- ISP INPUT -->
+        <label for="ipInput_id">ISP Network</label>
+        <input type="text" id="ipInput_id" placeholder="192.168.1.0/24" />
 
-    <!-- SUBNETS -->
-    <fieldset class="subnetEntries_class">
+        <!-- SUBNETS -->
+        <fieldset class="subnetEntries_class">
 
-        <legend>
-            Subnets
-            <input
-                    type="button"
-                    value="+ Add"
-                    id="addSubnetButton_id"
-            />
-        </legend>
+            <legend>
+                Subnets
+                <input type="button" value="+ Add" id="addSubnetButton_id" />
+            </legend>
 
-        <div class="subnetBlock">
+            <div class="subnetBlock">
 
-            <label>Name</label>
-            <label>Hosts</label>
+                <label>Name</label>
+                <label>Hosts</label>
 
-            <div class="subnetRow">
-                <input
-                        type="text"
-                        name="subnet"
-                        placeholder="HQ"
-                />
+                <div class="subnetRow">
+                    <input type="text" name="subnet" placeholder="HQ" />
 
-                <input
-                        type="number"
-                        name="hosts"
-                        placeholder="50"
-                        min="1"
-                />
+                    <input type="number" name="hosts" placeholder="50" min="1" />
 
-                <button
-                        type="button"
-                        class="removeBtn"
-                >
-                    ✕
-                </button>
+                    <button type="button" class="removeBtn">
+                        ✕
+                    </button>
+                </div>
+
             </div>
+        </fieldset>
 
-        </div>
-    </fieldset>
+        <!-- ACTION BUTTONS -->
+        <input type="submit" value="Calculate" id="subnetApplyButton_id" />
 
-    <!-- ACTION BUTTONS -->
-    <input
-            type="submit"
-            value="Calculate"
-            id="subnetApplyButton_id"
-    />
-
-    <button id="download" type="button">
-        Download PDF
-    </button>
-
-    <button id="exportJSON" type="button">
-        Export JSON
-    </button>
-
-    <!-- IMPORT -->
-    <label for="filePush">
-        Import JSON
-    </label>
-
-    <input
-            type="file"
-            accept=".json"
-            id="filePush"
-    />
-
-    <button id="retrieve" type="button">
-        Retrieve Allocation
-    </button>
-
-</form>
-
-<!-- VISUALIZATION -->
-<div id="visualization"></div>
-
-<!-- MODAL -->
-<div id="modalOverlay" class="hidden">
-
-    <div id="modal">
-
-        <h3 id="modalTitle">
-            Subnet Info
-        </h3>
-
-        <p>
-            <strong>IP Address:</strong>
-            <span id="modalIPAddress"></span>
-        </p>
-
-        <p>
-            <strong>Usable Hosts:</strong>
-            <span id="modalUHosts"></span>
-        </p>
-
-        <p>
-            <strong>Prefix:</strong>
-            <span id="modalPrefix"></span>
-        </p>
-
-        <p>
-            <strong>Network:</strong>
-            <span id="modalNetwork"></span>
-        </p>
-
-        <p>
-            <strong>Broadcast:</strong>
-            <span id="modalBroadcast"></span>
-        </p>
-
-        <p>
-            <strong>Subnet Mask:</strong>
-            <span id="modalsubnetmask"></span>
-        </p>
-
-        <p>
-            <strong>Wildcard Mask:</strong>
-            <span id="modalwildcardmask"></span>
-        </p>
-
-        <button id="closeModalBtn">
-            Close
+        <!-- DOWNLOAD BUTTONS -->
+        <button id="download" type="button">
+            Download PDF
         </button>
 
-    </div>
-</div>
+        <!-- EXPORT BUTTONS -->
+        <button id="exportJSON" type="button">
+            Export JSON
+        </button>
 
-<script type="module" src="main.js"></script>
+        <!-- IMPORT -->
+        <label for="filePush">
+            Import JSON
+        </label>
+
+        <!-- CHOOSE FILE BUTTON -->
+        <input type="file" accept=".json" id="filePush" />
+
+        <!-- RETRIVE ALLOCATION BUTTON -->
+        <button id="retrieve" type="button">
+            Retrieve Allocation
+        </button>
+
+    </form>
+
+    <!-- VISUALIZATION -->
+    <div id="visualization"></div>
+
+    <!-- MODAL -->
+    <div id="modalOverlay" class="hidden">
+
+        <div id="modal">
+
+            <h3 id="modalTitle">
+                Subnet Info
+            </h3>
+
+            <p>
+                <strong>IP Address:</strong>
+                <span id="modalIPAddress"></span>
+            </p>
+
+            <p>
+                <strong>Usable Hosts:</strong>
+                <span id="modalUHosts"></span>
+            </p>
+
+            <p>
+                <strong>Prefix:</strong>
+                <span id="modalPrefix"></span>
+            </p>
+
+            <p>
+                <strong>Network:</strong>
+                <span id="modalNetwork"></span>
+            </p>
+
+            <p>
+                <strong>Broadcast:</strong>
+                <span id="modalBroadcast"></span>
+            </p>
+
+            <p>
+                <strong>Subnet Mask:</strong>
+                <span id="modalsubnetmask"></span>
+            </p>
+
+            <p>
+                <strong>Wildcard Mask:</strong>
+                <span id="modalwildcardmask"></span>
+            </p>
+
+            <button id="closeModalBtn">
+                Close
+            </button>
+
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
 
 </body>
+
 </html>
