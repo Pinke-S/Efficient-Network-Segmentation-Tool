@@ -1,10 +1,10 @@
 import { getTotalAdresses } from "./src/Utils/network.js";
-import { exportAllocation } from "./src/Utils/export.js";
-import { uploadAllocation, getAllocation } from "./src/retrieveAllocation.js"
+import { exportAllocationToPDF, exportAllocationToJson, importAllocationFromJson } from "./src/Utils/export.js";
 
 import {
   getFormRows,
   sortAllocationRequest,
+  Subnet,
 } from "./src/Subnet/parsing.js";
 
 import { validateSubnetAllocation } from "./src/Subnet/inputValidation.js";
@@ -139,7 +139,7 @@ const retrieveBtn = document.getElementById("retrieve");
 const fileInput = document.getElementById("filePush");
 
 downloadJsonBtn.addEventListener("click", () => {
-  uploadAllocation(
+  exportAllocationToJson(
     latestAllocatedSubnets,
     "allocation",
     latestIP
@@ -148,49 +148,98 @@ downloadJsonBtn.addEventListener("click", () => {
 
 retrieveBtn.addEventListener("click", async () => {
   if (fileInput.files.length !== 1) { alert('no file selected'); return; }
-  const { ISP, subnets } = await getAllocation(fileInput.files);
-  console.log(ISP);
+  const ISP = await importAllocationFromJson(fileInput.files);
 
   // til at reconstruct isp root IP
   const reconstructedISP = new ipAddress();
+  reconstructedISP.octetsArray = new Uint8Array(4);
+  for (let i = 0; i < 4; i++)
+    reconstructedISP.octetsArray[i] = ISP.octetsArray[i];
+  reconstructedISP.prefix = ISP.prefix;
 
-  const ispOctets = Array.isArray(ISP.octetsArray)
-    ? ISP.octetsArray
-    : Object.values(ISP.octetsArray);
-  reconstructedISP.ipAddressFromArray(
-    ispOctets,
-    ISP.prefix
-  );
+
+  //reconstruct allokation data
+  function reconstructSubnets(parentIP, importIPs) {
+    importIPs.subnets.forEach((subnet) => {
+      const newSubnet = new ipAddress();
+      newSubnet.octetsArray = new Uint8Array(4);
+      for (let i = 0; i < 4; i++)
+        newSubnet.octetsArray[i] = subnet.octetsArray[i];
+
+
+      newSubnet.prefix = subnet.prefix;
+      newSubnet.name = subnet.name;
+
+      const latestIndex = parentIP.subnets.push(newSubnet) - 1;
+
+      if (subnet.subnets)
+        reconstructSubnets(parentIP.subnets[latestIndex], subnet);
+    })
+  }
+  reconstructSubnets(reconstructedISP, ISP);
+
 
   latestIP = reconstructedISP;
 
-  //reconstruct allokation data
-  const reconstructedSubnets = subnets.map((subnetData) => {
 
-    const subnet = new ipAddress();
+  latestAllocatedSubnets = reconstructedISP.subnets;
 
-    const octets = Array.isArray(subnetData.octetsArray)
-      ? subnetData.octetsArray
-      : Object.values(subnetData.octetsArray);
+  const totalAddresses = reconstructedISP.getTotalAddresses();
 
-    subnet.ipAddressFromArray(octets, subnetData.prefix);
 
-    subnet.name = subnetData.name;
-    subnet.hostRequirement = subnetData.hostRequirement;
-    subnet.nextPowerOfTwo = subnetData.nextPowerOfTwo;
-    subnet.rootIP = reconstructedISP;
+  // Adding IP to table
+  const IPInput = document.getElementById("ipInput_id");
+  IPInput.value = reconstructedISP.getNetworkAddress();
 
-    return subnet;
+  document.querySelectorAll(".subnetRow").forEach((e) => {
+    e.remove();
   });
 
-  latestAllocatedSubnets = reconstructedSubnets;
+  reconstructedISP.subnets.forEach((subnet) => {
+    if (subnet.name == "free")
+      return;
 
-  const totalAddresses = reconstructedSubnets.reduce(
-    (sum, subnet) => sum + subnet.getTotalAddresses(),
-    0
-  );
+    const row = document.createElement("div");
+    row.classList.add("subnetRow");
 
-  renderVisualization(totalAddresses, reconstructedSubnets);
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = "subnet";
+    nameInput.placeholder = "Name";
+    nameInput.value = subnet.name;
+
+
+    const hostInput = document.createElement("input");
+    hostInput.type = "number";
+    hostInput.name = "hosts";
+    hostInput.placeholder = "Hosts";
+    hostInput.min = "1";
+    hostInput.value = subnet.getTotalAvailableHosts();
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "✕";
+    removeBtn.type = "button";
+    removeBtn.classList.add("removeBtn");
+
+    removeBtn.addEventListener("click", () => {
+      row.remove();
+    });
+
+    row.appendChild(nameInput);
+    row.appendChild(hostInput);
+    row.appendChild(removeBtn);
+
+    subnetContainer.appendChild(row);
+  });
+
+
+
+
+
+
+
+
+  renderVisualization(totalAddresses, reconstructedISP.subnets);
 
   downloadBtn.disabled = false;
   downloadJsonBtn.disabled = false;
@@ -218,7 +267,7 @@ if (downloadBtn) {
       return;
     }
 
-    exportAllocation(latestIP, latestAllocatedSubnets);
+    exportAllocationToPDF(latestIP, latestAllocatedSubnets);
   });
 }
 
