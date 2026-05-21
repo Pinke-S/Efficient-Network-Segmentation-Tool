@@ -232,13 +232,6 @@ retrieveBtn.addEventListener("click", async () => {
     subnetContainer.appendChild(row);
   });
 
-
-
-
-
-
-
-
   renderVisualization(totalAddresses, reconstructedISP.subnets);
 
   downloadBtn.disabled = false;
@@ -280,7 +273,6 @@ function renderVisualization(totalAddresses, subnets) {
   const bar = document.createElement("div");
   bar.classList.add("networkBar");
 
-  // let used = 0;
   let colorsUsed = [];
 
   subnets.forEach((subnet) => {
@@ -307,25 +299,12 @@ function renderVisualization(totalAddresses, subnets) {
       modalSubnetMask.textContent = subnet.getNetMask();
       modalWildcardMask.textContent = subnet.getWildcardMask();
 
-
-
       modalOverlay.classList.remove("hidden");
     });
 
     bar.appendChild(box);
-    // used += size;
   }
   );
-
-  // if (used < totalAddresses) {
-  //   const free = document.createElement("div");
-  //   free.classList.add("subnetBox");
-  //   free.style.flex = totalAddresses - used;
-  //   free.style.backgroundColor = "#444";
-  //   free.textContent = "Free";
-
-  //   bar.appendChild(free);
-  // }
 
   visualization.appendChild(bar);
 }
