@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-export function exportAllocation(isp, subnets) {
+export function exportAllocationToPDF(isp, subnets) {
   const doc = new jsPDF();
 
   doc.setFont(doc.getFont().fontName, "bold");
@@ -14,18 +14,18 @@ export function exportAllocation(isp, subnets) {
   doc.setFontSize(10);
   doc.text(`Date: ${now.toLocaleDateString()}`, 14, 28);
   doc.text(
-      `Time: ${now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`,
-      14,
-      34
+    `Time: ${now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`,
+    14,
+    34
   );
 
   const ispText =
-      isp && typeof isp.ipAddressToString === "function"
-          ? isp.ipAddressToString()
-          : "Unknown";
+    isp && typeof isp.ipAddressToString === "function"
+      ? isp.ipAddressToString()
+      : "Unknown";
 
   doc.setFont(doc.getFont().fontName, "italic");
   doc.text(`ISP Address: ${ispText}`, 14, 40);
@@ -54,4 +54,40 @@ export function exportAllocation(isp, subnets) {
   });
 
   doc.save("network-allocation.pdf");
+}
+
+export function exportAllocationToJson(subnets, filename, ISP) {
+
+  const allocationData = {
+    ISP
+  };
+
+  const subnetAllocation = JSON.stringify(ISP, null, 2);
+
+  const blob = new Blob([subnetAllocation], {
+    type: "application/json"
+  });
+
+  const fileUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = fileUrl;
+  link.download = `${filename}.json`;
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(fileUrl);
+}
+
+export async function importAllocationFromJson(files) {
+
+  const file = files[0];
+
+  const text = await file.text();
+
+  const ISP = JSON.parse(text);
+
+  return ISP;
 }
