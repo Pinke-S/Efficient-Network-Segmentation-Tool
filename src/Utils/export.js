@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-export function exportAllocationToPDF(isp, subnets) {
+export function exportAllocationToPDF(isp) {
   const doc = new jsPDF();
 
   doc.setFont(doc.getFont().fontName, "bold");
@@ -56,7 +56,7 @@ export function exportAllocationToPDF(isp, subnets) {
   doc.save("network-allocation.pdf");
 }
 
-export function exportAllocationToJson(subnets, filename, ISP) {
+export function exportAllocationToJson(filename, ISP) {
 
   const allocationData = {
     ISP

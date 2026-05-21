@@ -14,15 +14,9 @@ import { ipAddress } from "./src/IP/ipaddress.js";
 /* =========================
    GLOBAL STATE
 ========================= */
-
-let latestAllocatedSubnets = [];
 let latestIP;
 
-/* add subnet row*/
-const addButton = document.getElementById("addSubnetButton_id");
-const subnetContainer = document.querySelector(".subnetBlock");
-
-addButton.addEventListener("click", () => {
+function addSubnetRow() {
   const row = document.createElement("div");
   row.classList.add("subnetRow");
 
@@ -51,14 +45,34 @@ addButton.addEventListener("click", () => {
   row.appendChild(removeBtn);
 
   subnetContainer.appendChild(row);
+
+  return { row, nameInput, hostInput, removeBtn };
+}
+
+function showButtons(show) {
+  downloadPdfBtn.disabled = show ? false : true;
+  downloadJsonBtn.disabled = show ? false : true;
+  downloadPdfBtn.style.backgroundColor = show ? "" : "#777";
+  downloadPdfBtn.style.cursor = show ? "pointer" : "not-allowed";
+  downloadJsonBtn.style.backgroundColor = show ? "" : "#777";
+  downloadJsonBtn.style.cursor = show ? "pointer" : "not-allowed";
+}
+
+/* subnet Table*/
+const addButton = document.getElementById("addSubnetButton_id");
+const subnetContainer = document.querySelector(".subnetBlock");
+
+addButton.addEventListener("click", () => {
+  addSubnetRow();
 });
 
-/* fjern row*/
-document.querySelectorAll(".removeBtn").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.target.parentElement.remove();
-  });
-});
+//  /* fjern row*/
+// document.querySelector(".removeBtn")..addEventListener("click", (e) => {
+//   e.target.parentElement.remove();
+//   console.log(e)
+// });
+
+
 
 /* modal */
 const modalOverlay = document.getElementById("modalOverlay");
@@ -72,9 +86,6 @@ const modalSubnetMask = document.getElementById("modalsubnetmask");
 const modalWildcardMask = document.getElementById("modalwildcardmask");
 const modalUsableHosts = document.getElementById("modalUHosts");
 const modalIPAddress = document.getElementById("modalIPAddress");
-
-
-
 
 closeModalBtn.addEventListener("click", () => {
   modalOverlay.classList.add("hidden");
@@ -112,15 +123,9 @@ form.addEventListener("submit", (e) => {
     })
 
     const allocatedSubnets = allocateAddresses(isp);
-    latestAllocatedSubnets = allocatedSubnets;
     latestIP = isp;
 
-    downloadBtn.disabled = false;
-    downloadJsonBtn.disabled = false;
-    downloadBtn.style.backgroundColor = "";
-    downloadBtn.style.cursor = "pointer";
-    downloadJsonBtn.style.backgroundColor = "";
-    downloadJsonBtn.style.cursor = "pointer";
+    showButtons(true);
 
     const totalAddresses = getTotalAdresses(isp.prefix);
 
@@ -133,14 +138,13 @@ form.addEventListener("submit", (e) => {
 });
 
 /* pdf export */
-const downloadBtn = document.getElementById("download");
+const downloadPdfBtn = document.getElementById("download");
 const downloadJsonBtn = document.getElementById("exportJSON");
 const retrieveBtn = document.getElementById("retrieve");
 const fileInput = document.getElementById("filePush");
 
 downloadJsonBtn.addEventListener("click", () => {
   exportAllocationToJson(
-    latestAllocatedSubnets,
     "allocation",
     latestIP
   );
@@ -181,9 +185,6 @@ retrieveBtn.addEventListener("click", async () => {
 
   latestIP = reconstructedISP;
 
-
-  latestAllocatedSubnets = reconstructedISP.subnets;
-
   const totalAddresses = reconstructedISP.getTotalAddresses();
 
 
@@ -199,72 +200,29 @@ retrieveBtn.addEventListener("click", async () => {
     if (subnet.name == "free")
       return;
 
-    const row = document.createElement("div");
-    row.classList.add("subnetRow");
 
-    const nameInput = document.createElement("input");
-    nameInput.type = "text";
-    nameInput.name = "subnet";
-    nameInput.placeholder = "Name";
+    const { row, nameInput, hostInput, removeBtn } = addSubnetRow();
     nameInput.value = subnet.name;
-
-
-    const hostInput = document.createElement("input");
-    hostInput.type = "number";
-    hostInput.name = "hosts";
-    hostInput.placeholder = "Hosts";
-    hostInput.min = "1";
     hostInput.value = subnet.getTotalAvailableHosts();
-
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "✕";
-    removeBtn.type = "button";
-    removeBtn.classList.add("removeBtn");
-
-    removeBtn.addEventListener("click", () => {
-      row.remove();
-    });
-
-    row.appendChild(nameInput);
-    row.appendChild(hostInput);
-    row.appendChild(removeBtn);
-
-    subnetContainer.appendChild(row);
   });
 
   renderVisualization(totalAddresses, reconstructedISP.subnets);
 
-  downloadBtn.disabled = false;
-  downloadJsonBtn.disabled = false;
-
-  downloadBtn.style.backgroundColor = "";
-  downloadBtn.style.cursor = "pointer";
-
-  downloadJsonBtn.style.backgroundColor = "";
-  downloadJsonBtn.style.cursor = "pointer";
+  showButtons(true);
 });
 
+showButtons(false);
 
-downloadBtn.disabled = true;
-downloadJsonBtn.disabled = true;
-downloadBtn.style.backgroundColor = "#777";
-downloadBtn.style.cursor = "not-allowed";
-downloadJsonBtn.style.backgroundColor = "";
-downloadJsonBtn.style.cursor = "not-allowed";
-downloadJsonBtn.style.backgroundColor = "#777";
-
-if (downloadBtn) {
-  downloadBtn.addEventListener("click", () => {
-    if (latestAllocatedSubnets.length === 0) {
+if (downloadPdfBtn) {
+  downloadPdfBtn.addEventListener("click", () => {
+    if (latestIP.subnets.length === 0) {
       alert("Calculate an allocation before exporting.");
       return;
     }
 
-    exportAllocationToPDF(latestIP, latestAllocatedSubnets);
+    exportAllocationToPDF(latestIP);
   });
 }
-
-
 
 /* visual bar */
 function renderVisualization(totalAddresses, subnets) {
@@ -307,17 +265,6 @@ function renderVisualization(totalAddresses, subnets) {
   );
 
   visualization.appendChild(bar);
-}
-
-/* kopi af værdien i arrayet.*/
-
-function subnetToIpAddress(subnet) {
-
-  const ip = new ipAddress();
-  const octets = Object.values(subnet.octetsArray);
-  ip.ipAddressFromArray(octets, subnet.prefix);
-  ip.name = subnet.name;
-  return ip;
 }
 
 function getRandomColor(colorsUsed) {
