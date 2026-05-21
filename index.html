@@ -117,6 +117,33 @@
                 <span id="modalwildcardmask"></span>
             </p>
 
+            <!-- Nested SUBNETS -->
+            <form id="modalSubnetForm">
+
+                <!-- SUBNETS -->
+                <fieldset class="subnetEntries_class">
+
+                    <legend>
+                        Subnets
+                        <input type="button" value="+ Add" id="modalAddSubnetButton_id" />
+                    </legend>
+
+                    <div class="modalSubnetBlock">
+
+                        <label>Name</label>
+                        <label>Hosts</label>
+
+                    </div>
+                </fieldset>
+
+                <!-- ACTION BUTTONS -->
+                <input type="submit" value="Calculate" id="modalSubnetApplyButton_id" />
+
+            </form>
+
+            <div id="modalVisualization"></div>
+
+
             <button id="closeModalBtn">
                 Close
             </button>

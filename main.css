@@ -223,6 +223,7 @@ legend {
     filter 0.15s ease;
 }
 
+
 /* Hover effekt */
 .subnetBox:hover {
   box-shadow: 0 0 0 2px #fff inset,

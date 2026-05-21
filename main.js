@@ -15,10 +15,11 @@ import { ipAddress } from "./src/IP/ipaddress.js";
    GLOBAL STATE
 ========================= */
 let latestIP;
+let currentSubnet;
 
-function addSubnetRow() {
+function addSubnetRow(Parent, rowClass) {
   const row = document.createElement("div");
-  row.classList.add("subnetRow");
+  row.classList.add(rowClass);
 
   const nameInput = document.createElement("input");
   nameInput.type = "text";
@@ -44,7 +45,7 @@ function addSubnetRow() {
   row.appendChild(hostInput);
   row.appendChild(removeBtn);
 
-  subnetContainer.appendChild(row);
+  Parent.appendChild(row);
 
   return { row, nameInput, hostInput, removeBtn };
 }
@@ -63,7 +64,7 @@ const addButton = document.getElementById("addSubnetButton_id");
 const subnetContainer = document.querySelector(".subnetBlock");
 
 addButton.addEventListener("click", () => {
-  addSubnetRow();
+  addSubnetRow(subnetContainer, "subnetRow");
 });
 
 //  /* fjern row*/
@@ -77,6 +78,7 @@ addButton.addEventListener("click", () => {
 /* modal */
 const modalOverlay = document.getElementById("modalOverlay");
 const closeModalBtn = document.getElementById("closeModalBtn");
+const modalSubnetBlock = document.querySelector(".modalSubnetBlock");
 
 const modalTitle = document.getElementById("modalTitle");
 const modalNetwork = document.getElementById("modalNetwork");
@@ -89,13 +91,49 @@ const modalIPAddress = document.getElementById("modalIPAddress");
 
 closeModalBtn.addEventListener("click", () => {
   modalOverlay.classList.add("hidden");
+  currentSubnet = null;
 });
 
 modalOverlay.addEventListener("click", (e) => {
   if (e.target === modalOverlay) {
     modalOverlay.classList.add("hidden");
+    currentSubnet = null;
   }
 });
+
+document.querySelector("#modalAddSubnetButton_id").addEventListener("click", () => {
+  addSubnetRow(modalSubnetBlock, "modalSubnetRow");
+})
+
+document.querySelector("#modalSubnetForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  if (!currentSubnet) return;
+  try {
+    let isp = currentSubnet;
+
+    const parsedSubnets = getFormRows(document.querySelector(".modalSubnetBlock"), ".modalSubnetRow");
+    sortAllocationRequest(parsedSubnets);
+
+    parsedSubnets.forEach((subnet) => {
+      let i = new ipAddress();
+      i.name = subnet.name;
+      i.prefix = subnet.prefix;
+      isp.subnets.push(i);
+    })
+
+    const allocatedSubnets = allocateAddresses(isp);
+    console.log(isp);
+
+    const totalAddresses = getTotalAdresses(isp.prefix);
+
+    renderVisualization(document.querySelector("#modalVisualization"), totalAddresses, isp.subnets);
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+
+})
 
 /* submit form til backend */
 const form = document.getElementById("subnetForm");
@@ -112,7 +150,7 @@ form.addEventListener("submit", (e) => {
     const isp = new ipAddress();
     isp.ipAddressFromString(IPInput);
 
-    const subnets = getFormRows(form);
+    const subnets = getFormRows(subnetContainer, ".subnetRow");
     sortAllocationRequest(subnets);
 
     subnets.forEach((subnet) => {
@@ -130,7 +168,7 @@ form.addEventListener("submit", (e) => {
     const totalAddresses = getTotalAdresses(isp.prefix);
 
 
-    renderVisualization(totalAddresses, isp.subnets);
+    renderVisualization(visualization, totalAddresses, isp.subnets);
   } catch (err) {
     console.error(err);
     alert(err.message);
@@ -201,12 +239,12 @@ retrieveBtn.addEventListener("click", async () => {
       return;
 
 
-    const { row, nameInput, hostInput, removeBtn } = addSubnetRow();
+    const { row, nameInput, hostInput, removeBtn } = addSubnetRow(subnetContainer, "subnetRow");
     nameInput.value = subnet.name;
     hostInput.value = subnet.getTotalAvailableHosts();
   });
 
-  renderVisualization(totalAddresses, reconstructedISP.subnets);
+  renderVisualization(visualization, totalAddresses, reconstructedISP.subnets);
 
   showButtons(true);
 });
@@ -225,15 +263,15 @@ if (downloadPdfBtn) {
 }
 
 /* visual bar */
-function renderVisualization(totalAddresses, subnets) {
-  visualization.innerHTML = "";
+function renderVisualization(parent, totalAddresses, incommingSubnets) {
+  parent.innerHTML = "";
 
   const bar = document.createElement("div");
   bar.classList.add("networkBar");
 
   let colorsUsed = [];
 
-  subnets.forEach((subnet) => {
+  incommingSubnets.forEach((subnet) => {
     const size = subnet.getTotalAddresses();
 
     const box = document.createElement("div");
@@ -247,7 +285,10 @@ function renderVisualization(totalAddresses, subnets) {
 
     box.textContent = `${subnet.name} /${subnet.prefix}`;
 
+
     box.addEventListener("click", () => {
+      currentSubnet = subnet;
+
       modalTitle.textContent = subnet.name;
       modalIPAddress.textContent = subnet.ipAddressToString();
       modalUsableHosts.textContent = subnet.getTotalAvailableHosts();
@@ -257,6 +298,22 @@ function renderVisualization(totalAddresses, subnets) {
       modalSubnetMask.textContent = subnet.getNetMask();
       modalWildcardMask.textContent = subnet.getWildcardMask();
 
+      // removes subnet entries
+      document.querySelector("#modalVisualization").innerHTML = "";
+      document.querySelectorAll(".modalSubnetRow").forEach((e) => { e.remove(); });
+
+      // Adding pre exsisting subnets
+      if (subnet.subnets.length) {
+        for (let i = 0; i < subnet.subnets.length; i++) {
+          if (subnet.subnets[i].name !== "free") {
+            let { row, nameInput, hostInput, removeBtn } = addSubnetRow(modalSubnetBlock, "modalSubnetRow");
+            nameInput.value = subnet.subnets[i].name;
+            hostInput.value = subnet.subnets[i].getTotalAvailableHosts();
+          }
+        }
+        renderVisualization(document.querySelector("#modalVisualization"), totalAddresses, subnet.subnets);
+      }
+
       modalOverlay.classList.remove("hidden");
     });
 
@@ -264,8 +321,10 @@ function renderVisualization(totalAddresses, subnets) {
   }
   );
 
-  visualization.appendChild(bar);
+  parent.appendChild(bar);
 }
+
+
 
 function getRandomColor(colorsUsed) {
   const colors = [
