@@ -15,7 +15,34 @@ import { ipAddress } from "./src/IP/ipaddress.js";
    GLOBAL STATE
 ========================= */
 let latestIP;
-let currentSubnet;
+let nestedSubnet = [];
+
+function updateModal(network) {
+  modalTitle.textContent = network.name;
+  modalIPAddress.textContent = network.ipAddressToString();
+  modalUsableHosts.textContent = network.getTotalAvailableHosts();
+  modalPrefix.textContent = "/" + network.prefix;
+  modalNetwork.textContent = network.getNetworkAddress();
+  modalBroadcast.textContent = network.getBroadcastAddress();
+  modalSubnetMask.textContent = network.getNetMask();
+  modalWildcardMask.textContent = network.getWildcardMask();
+
+  // removes subnet entries
+  document.querySelector("#modalVisualization").innerHTML = "";
+  document.querySelectorAll(".modalSubnetRow").forEach((e) => { e.remove(); });
+
+  // Adding pre exsisting subnets
+  if (network.subnets.length) {
+    for (let i = 0; i < network.subnets.length; i++) {
+      if (network.subnets[i].name !== "free") {
+        let { row, nameInput, hostInput, removeBtn } = addSubnetRow(modalSubnetBlock, "modalSubnetRow");
+        nameInput.value = network.subnets[i].name;
+        hostInput.value = network.subnets[i].getTotalAvailableHosts();
+      }
+    }
+    renderVisualization(document.querySelector("#modalVisualization"), network.getTotalAddresses(), network.subnets);
+  }
+}
 
 function addSubnetRow(Parent, rowClass) {
   const row = document.createElement("div");
@@ -78,6 +105,7 @@ addButton.addEventListener("click", () => {
 /* modal */
 const modalOverlay = document.getElementById("modalOverlay");
 const closeModalBtn = document.getElementById("closeModalBtn");
+const backModalBtn = document.getElementById("backModalBtn");
 const modalSubnetBlock = document.querySelector(".modalSubnetBlock");
 
 const modalTitle = document.getElementById("modalTitle");
@@ -91,13 +119,27 @@ const modalIPAddress = document.getElementById("modalIPAddress");
 
 closeModalBtn.addEventListener("click", () => {
   modalOverlay.classList.add("hidden");
-  currentSubnet = null;
+  nestedSubnet = [];
+});
+
+backModalBtn.addEventListener("click", () => {
+  if (nestedSubnet.length) {
+    nestedSubnet.pop();
+    updateModal(nestedSubnet[nestedSubnet.length - 1]);
+
+    if (nestedSubnet.length > 1) {
+      backModalBtn.style.visibility = "visible";
+    }
+    else {
+      backModalBtn.style.visibility = "hidden";
+    }
+  }
 });
 
 modalOverlay.addEventListener("click", (e) => {
   if (e.target === modalOverlay) {
     modalOverlay.classList.add("hidden");
-    currentSubnet = null;
+    nestedSubnet = [];
   }
 });
 
@@ -108,9 +150,9 @@ document.querySelector("#modalAddSubnetButton_id").addEventListener("click", () 
 document.querySelector("#modalSubnetForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  if (!currentSubnet) return;
+  if (!nestedSubnet.length) return;
   try {
-    let isp = currentSubnet;
+    let isp = nestedSubnet[nestedSubnet.length - 1];
 
     const parsedSubnets = getFormRows(document.querySelector(".modalSubnetBlock"), ".modalSubnetRow");
     sortAllocationRequest(parsedSubnets);
@@ -287,31 +329,15 @@ function renderVisualization(parent, totalAddresses, incommingSubnets) {
 
 
     box.addEventListener("click", () => {
-      currentSubnet = subnet;
+      nestedSubnet.push(subnet);
 
-      modalTitle.textContent = subnet.name;
-      modalIPAddress.textContent = subnet.ipAddressToString();
-      modalUsableHosts.textContent = subnet.getTotalAvailableHosts();
-      modalPrefix.textContent = "/" + subnet.prefix;
-      modalNetwork.textContent = subnet.getNetworkAddress();
-      modalBroadcast.textContent = subnet.getBroadcastAddress();
-      modalSubnetMask.textContent = subnet.getNetMask();
-      modalWildcardMask.textContent = subnet.getWildcardMask();
+      updateModal(subnet);
 
-      // removes subnet entries
-      document.querySelector("#modalVisualization").innerHTML = "";
-      document.querySelectorAll(".modalSubnetRow").forEach((e) => { e.remove(); });
-
-      // Adding pre exsisting subnets
-      if (subnet.subnets.length) {
-        for (let i = 0; i < subnet.subnets.length; i++) {
-          if (subnet.subnets[i].name !== "free") {
-            let { row, nameInput, hostInput, removeBtn } = addSubnetRow(modalSubnetBlock, "modalSubnetRow");
-            nameInput.value = subnet.subnets[i].name;
-            hostInput.value = subnet.subnets[i].getTotalAvailableHosts();
-          }
-        }
-        renderVisualization(document.querySelector("#modalVisualization"), totalAddresses, subnet.subnets);
+      if (nestedSubnet.length > 1) {
+        backModalBtn.style.visibility = "visible";
+      }
+      else {
+        backModalBtn.style.visibility = "hidden";
       }
 
       modalOverlay.classList.remove("hidden");
