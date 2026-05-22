@@ -154,6 +154,7 @@ document.querySelector("#modalSubnetForm").addEventListener("submit", (e) => {
   try {
     let isp = nestedSubnet[nestedSubnet.length - 1];
 
+    isp.subnets = [];
     const parsedSubnets = getFormRows(document.querySelector(".modalSubnetBlock"), ".modalSubnetRow");
     sortAllocationRequest(parsedSubnets);
 
