@@ -42,7 +42,7 @@ export function exportAllocationToPDF(isp) {
       "Subnet Mask",
       "Wildcard Mask",
     ]],
-    body: subnets.map((subnet) => [
+    body: isp.subnets.map((subnet) => [
       subnet.name,
       2 ** (32 - subnet.prefix) - 2,
       "/" + subnet.prefix,
