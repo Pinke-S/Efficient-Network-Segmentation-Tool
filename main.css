@@ -124,7 +124,6 @@ legend {
   width: 100%;
   height: 30px;
 
-
   background: #3b82f6;
   color: white;
 
@@ -223,10 +222,10 @@ legend {
     filter 0.15s ease;
 }
 
-
 /* Hover effekt */
 .subnetBox:hover {
-  box-shadow: 0 0 0 2px #fff inset,
+  box-shadow:
+    0 0 0 2px #fff inset,
     0 0 12px rgba(0, 0, 0, 0.5);
   filter: brightness(1.15);
 }
@@ -288,4 +287,85 @@ legend {
   background-color: #d9534f;
   color: white;
   cursor: pointer;
+}
+
+/* Nested subnet calculate button */
+#modalSubnetForm button[type="submit"] {
+  margin-top: 16px;
+  padding: 12px 20px;
+
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.2s ease;
+
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+/* Hover effect */
+#modalSubnetForm button[type="submit"]:hover {
+  transform: translateY(-2px);
+
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+}
+
+/* Click effect */
+#modalSubnetForm button[type="submit"]:active {
+  transform: scale(0.98);
+}
+
+/* Optional full width */
+#modalSubnetForm button[type="submit"] {
+  width: 100%;
+}
+
+#modalSubnetApplyButton_id {
+  margin-top: 16px;
+  padding: 14px 20px;
+
+  width: 100%;
+
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+
+  border: none;
+  border-radius: 12px;
+
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.2s ease;
+
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+#modalSubnetApplyButton_id:hover {
+  transform: translateY(-2px);
+
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.45);
+}
+
+#modalSubnetApplyButton_id:active {
+  transform: scale(0.98);
 }

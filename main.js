@@ -1,4 +1,4 @@
-import { getTotalAdresses } from "./src/Utils/network.js";
+import { getTotalAdresses, getNextPowerOfTwo } from "./src/Utils/network.js";
 import { exportAllocationToPDF, exportAllocationToJson, importAllocationFromJson } from "./src/Utils/export.js";
 
 import {
@@ -123,17 +123,17 @@ closeModalBtn.addEventListener("click", () => {
 });
 
 backModalBtn.addEventListener("click", () => {
-  if (nestedSubnet.length) {
-    nestedSubnet.pop();
-    updateModal(nestedSubnet[nestedSubnet.length - 1]);
+    if (nestedSubnet.length <= 1) {
+        backModalBtn.style.visibility = "hidden";
+        return;
+    }
 
-    if (nestedSubnet.length > 1) {
-      backModalBtn.style.visibility = "visible";
-    }
-    else {
-      backModalBtn.style.visibility = "hidden";
-    }
-  }
+    nestedSubnet.pop();
+
+    const previousSubnet = nestedSubnet[nestedSubnet.length - 1];
+    updateModal(previousSubnet);
+
+    backModalBtn.style.visibility = nestedSubnet.length > 1 ? "visible" : "hidden";
 });
 
 modalOverlay.addEventListener("click", (e) => {
@@ -148,35 +148,50 @@ document.querySelector("#modalAddSubnetButton_id").addEventListener("click", () 
 })
 
 document.querySelector("#modalSubnetForm").addEventListener("submit", (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!nestedSubnet.length) return;
-  try {
-    let isp = nestedSubnet[nestedSubnet.length - 1];
+    if (!nestedSubnet.length) return;
 
-    isp.subnets = [];
-    const parsedSubnets = getFormRows(document.querySelector(".modalSubnetBlock"), ".modalSubnetRow");
-    sortAllocationRequest(parsedSubnets);
+    try {
+        const parentSubnet = nestedSubnet[nestedSubnet.length - 1];
 
-    parsedSubnets.forEach((subnet) => {
-      let i = new ipAddress();
-      i.name = subnet.name;
-      i.prefix = subnet.prefix;
-      isp.subnets.push(i);
-    })
+        validateNestedSubnetAllocation(
+            parentSubnet,
+            document.querySelector(".modalSubnetBlock"),
+            ".modalSubnetRow"
+        );
 
-    const allocatedSubnets = allocateAddresses(isp);
-    console.log(isp);
+        parentSubnet.subnets = [];
 
-    const totalAddresses = getTotalAdresses(isp.prefix);
+        const parsedSubnets = getFormRows(
+            document.querySelector(".modalSubnetBlock"),
+            ".modalSubnetRow"
+        );
 
-    renderVisualization(document.querySelector("#modalVisualization"), totalAddresses, isp.subnets);
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
+        sortAllocationRequest(parsedSubnets);
 
-})
+        parsedSubnets.forEach((subnet) => {
+            const childSubnet = new ipAddress();
+            childSubnet.name = subnet.name;
+            childSubnet.prefix = subnet.prefix;
+            parentSubnet.subnets.push(childSubnet);
+        });
+
+        allocateAddresses(parentSubnet);
+
+        renderVisualization(
+            document.querySelector("#modalVisualization"),
+            parentSubnet.getTotalAddresses(),
+            parentSubnet.subnets
+        );
+
+        console.log("Nested subnet allocation updated:", parentSubnet);
+
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+    }
+});
 
 /* submit form til backend */
 const form = document.getElementById("subnetForm");
@@ -390,3 +405,38 @@ function getRandomColor(colorsUsed) {
   colorsUsed.push(rnd);
   return rnd;
 }
+
+
+/* nested subnets */
+
+function validateNestedSubnetAllocation(parentSubnet, rowsContainer, rowClass) {
+    const rows = rowsContainer.querySelectorAll(rowClass);
+
+    if (rows.length === 0) {
+        throw new Error("No nested subnet rows provided");
+    }
+
+    let totalRequired = 0;
+
+    rows.forEach(row => {
+        const name = row.querySelector('[name="subnet"]').value.trim();
+        const hosts = Number(row.querySelector('[name="hosts"]').value);
+
+        if (!name) {
+            throw new Error("Nested subnet is missing a name");
+        }
+
+        if (!hosts || hosts < 1) {
+            throw new Error("Nested subnet has invalid host requirement");
+        }
+
+        totalRequired += getNextPowerOfTwo(hosts);
+    });
+
+    if (totalRequired > parentSubnet.getTotalAddresses()) {
+        throw new Error("Nested subnets exceed the selected parent subnet size");
+    }
+
+    return true;
+}
+
