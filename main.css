@@ -110,6 +110,21 @@ legend {
   width: 90px;
 }
 
+.modalSubnetRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Name input grows */
+.modalSubnetRow input[type="text"] {
+  flex: 1;
+}
+
+/* Hosts input */
+.modalSubnetRow input[type="number"] {
+  width: 90px;
+}
+
 #fileUpload {
   display: none;
 }
