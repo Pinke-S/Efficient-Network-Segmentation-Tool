@@ -69,18 +69,16 @@ legend {
   gap: 0.5rem;
 }
 
-/* Add button */
-#addSubnetButton_id {
+.smallbutton_class {
   background-color: #2c313c;
-  color: #e4e6eb;
   border: none;
   border-radius: 4px;
   padding: 0.2rem 0.5rem;
   cursor: pointer;
 }
 
-#addSubnetButton_id:hover {
-  background-color: #3a3f4b;
+.smallbutton_class:hover {
+  filter: brightness(85%);
 }
 
 /* Subnet block */
