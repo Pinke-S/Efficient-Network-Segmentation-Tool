@@ -382,3 +382,21 @@ legend {
 #modalSubnetApplyButton_id:active {
   transform: scale(0.98);
 }
+
+/* makes the nested subnets scrollable  */
+
+.modalSubnetBlock {
+  max-height: 220px;
+  overflow-y: auto;
+
+  padding-right: 8px;
+}
+
+#modalSubnetForm {
+  width: 80%;
+  margin: 0 auto;
+}
+
+#modalSubnetForm legend {
+  text-align: center;
+}
