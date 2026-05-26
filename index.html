@@ -2,130 +2,132 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Efficient Network Segmentation Tool</title>
-  <script type="module" crossorigin src="/Efficient-Network-Segmentation-Tool/assets/index-BPuyEU1T.js"></script>
-  <link rel="stylesheet" crossorigin href="/Efficient-Network-Segmentation-Tool/assets/index-DbnIHEoG.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Efficient Network Segmentation Tool</title>
+  <script type="module" crossorigin src="/Efficient-Network-Segmentation-Tool/assets/index-Chj2vshT.js"></script>
+  <link rel="stylesheet" crossorigin href="/Efficient-Network-Segmentation-Tool/assets/index-vIGSrn8i.css">
 </head>
 
 <body>
+  <form id="subnetForm">
+    <!-- ISP INPUT -->
+    <label for="ipInput_id">ISP Network</label>
+    <input type="text" id="ipInput_id" placeholder="192.168.1.0/24" />
 
-    <form id="subnetForm">
+    <!-- SUBNETS -->
+    <fieldset class="subnetEntries_class">
+      <legend>
+        Subnets
+        <input type="button" value="+ Add" class="smallbutton_class" id="addSubnetButton_id" />
+      </legend>
 
-        <!-- ISP INPUT -->
-        <label for="ipInput_id">ISP Network</label>
-        <input type="text" id="ipInput_id" placeholder="192.168.1.0/24" />
+      <div class="subnetBlock">
+        <label>Name</label>
+        <label>Hosts</label>
 
+        <div class="subnetRow">
+          <input type="text" name="subnet" placeholder="HQ" />
+
+          <input type="number" name="hosts" placeholder="50" min="1" />
+
+          <button type="button" class="removeBtn" style="visibility: hidden">
+            ✕
+          </button>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- ACTION BUTTONS -->
+    <input type="submit" value="Calculate" id="subnetApplyButton_id" />
+
+    <!-- DOWNLOAD BUTTONS -->
+    <button id="download" type="button">Download PDF</button>
+
+    <!-- EXPORT BUTTONS -->
+    <button id="exportJSON" type="button">Export JSON</button>
+
+    <!-- IMPORT -->
+    <label for="filePush"> Import JSON </label>
+
+    <!-- CHOOSE FILE BUTTON -->
+    <input type="file" accept=".json" id="filePush" />
+
+    <!-- RETRIVE ALLOCATION BUTTON -->
+    <button id="retrieve" type="button">Import JSON</button>
+  </form>
+
+  <!-- VISUALIZATION -->
+  <div id="visualization"></div>
+
+  <!-- MODAL -->
+  <div id="modalOverlay" class="hidden">
+    <div id="modal">
+      <h3 id="modalTitle">Subnet Info</h3>
+
+      <p>
+        <strong>IP Address:</strong>
+        <span id="modalIPAddress"></span>
+      </p>
+
+      <p>
+        <strong>Usable Hosts:</strong>
+        <span id="modalUHosts"></span>
+      </p>
+
+      <p>
+        <strong>Prefix:</strong>
+        <span id="modalPrefix"></span>
+      </p>
+
+      <p>
+        <strong>Network:</strong>
+        <span id="modalNetwork"></span>
+      </p>
+
+      <p>
+        <strong>Broadcast:</strong>
+        <span id="modalBroadcast"></span>
+      </p>
+
+      <p>
+        <strong>Subnet Mask:</strong>
+        <span id="modalsubnetmask"></span>
+      </p>
+
+      <p>
+        <strong>Wildcard Mask:</strong>
+        <span id="modalwildcardmask"></span>
+      </p>
+
+      <!-- Nested SUBNETS -->
+      <form id="modalSubnetForm">
         <!-- SUBNETS -->
         <fieldset class="subnetEntries_class">
+          <legend>
+            Subnets
+            <input type="button" value="+ Add" class="smallbutton_class" id="modalAddSubnetButton_id" />
+          </legend>
 
-            <legend>
-                Subnets
-                <input type="button" value="+ Add" id="addSubnetButton_id" />
-            </legend>
-
-            <div class="subnetBlock">
-
-                <label>Name</label>
-                <label>Hosts</label>
-
-                <div class="subnetRow">
-                    <input type="text" name="subnet" placeholder="HQ" />
-
-                    <input type="number" name="hosts" placeholder="50" min="1" />
-
-                    <button type="button" class="removeBtn" style="visibility: hidden;">
-                        ✕
-                    </button>
-                </div>
-
-            </div>
+          <div class="modalSubnetBlock">
+            <label>Name</label>
+            <label>Hosts</label>
+          </div>
         </fieldset>
 
         <!-- ACTION BUTTONS -->
-        <input type="submit" value="Calculate" id="subnetApplyButton_id" />
-
-        <!-- DOWNLOAD BUTTONS -->
-        <button id="download" type="button">
-            Download PDF
+        <button type="submit" id="modalSubnetApplyButton_id">
+          Calculate Nested Subnets
         </button>
+      </form>
 
-        <!-- EXPORT BUTTONS -->
-        <button id="exportJSON" type="button">
-            Export JSON
-        </button>
+      <div id="modalVisualization"></div>
 
-        <!-- IMPORT -->
-        <label for="filePush">
-            Import JSON
-        </label>
-
-        <!-- CHOOSE FILE BUTTON -->
-        <input type="file" accept=".json" id="filePush" />
-
-        <!-- RETRIVE ALLOCATION BUTTON -->
-        <button id="retrieve" type="button">
-            Retrieve Allocation
-        </button>
-
-    </form>
-
-    <!-- VISUALIZATION -->
-    <div id="visualization"></div>
-
-    <!-- MODAL -->
-    <div id="modalOverlay" class="hidden">
-
-        <div id="modal">
-
-            <h3 id="modalTitle">
-                Subnet Info
-            </h3>
-
-            <p>
-                <strong>IP Address:</strong>
-                <span id="modalIPAddress"></span>
-            </p>
-
-            <p>
-                <strong>Usable Hosts:</strong>
-                <span id="modalUHosts"></span>
-            </p>
-
-            <p>
-                <strong>Prefix:</strong>
-                <span id="modalPrefix"></span>
-            </p>
-
-            <p>
-                <strong>Network:</strong>
-                <span id="modalNetwork"></span>
-            </p>
-
-            <p>
-                <strong>Broadcast:</strong>
-                <span id="modalBroadcast"></span>
-            </p>
-
-            <p>
-                <strong>Subnet Mask:</strong>
-                <span id="modalsubnetmask"></span>
-            </p>
-
-            <p>
-                <strong>Wildcard Mask:</strong>
-                <span id="modalwildcardmask"></span>
-            </p>
-
-            <button id="closeModalBtn">
-                Close
-            </button>
-
-        </div>
+      <button id="closeModalBtn">Close</button>
+      <button class="smallbutton_class" id="backModalBtn">back</button>
     </div>
+  </div>
 
-
 </body>
 
 </html>
