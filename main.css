@@ -136,13 +136,11 @@ legend {
 
 /* Hover effect */
 .bigbutton_class:hover {
-  background-color: #2f6edc;
+  filter: brightness(120%);
 
   transform: translateY(-2px);
 
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Click effect */
