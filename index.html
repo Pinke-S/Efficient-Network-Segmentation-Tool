@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Efficient Network Segmentation Tool</title>
-  <script type="module" crossorigin src="/Efficient-Network-Segmentation-Tool/assets/index-C6X7Nnyq.js"></script>
-  <link rel="stylesheet" crossorigin href="/Efficient-Network-Segmentation-Tool/assets/index-CB34IyR5.css">
+  <script type="module" crossorigin src="/Efficient-Network-Segmentation-Tool/assets/index-ofOyzEiK.js"></script>
+  <link rel="stylesheet" crossorigin href="/Efficient-Network-Segmentation-Tool/assets/index-CBRKvcrb.css">
 </head>
 
 <body>
@@ -26,7 +26,7 @@
         <label>Name</label>
         <label>Hosts</label>
 
-        <div class="subnetRow">
+        <div class="subnetRow" id="mainSubnetRow">
           <input type="text" name="subnet" placeholder="HQ" />
 
           <input type="number" name="hosts" placeholder="50" min="1" />
@@ -39,13 +39,13 @@
     </fieldset>
 
     <!-- ACTION BUTTONS -->
-    <input type="submit" value="Calculate" id="subnetApplyButton_id" />
+    <input class="bigbutton_class" id="subnetApplyButton_id" type="submit" value="Calculate" />
 
     <!-- DOWNLOAD BUTTONS -->
-    <button id="download" type="button">Download PDF</button>
+    <button class="bigbutton_class" id="download" type="button">Download PDF</button>
 
     <!-- EXPORT BUTTONS -->
-    <button id="exportJSON" type="button">Export JSON</button>
+    <button class="bigbutton_class" id="exportJSON" type="button">Export JSON</button>
 
     <!-- IMPORT -->
     <label for="filePush"> Import JSON </label>
@@ -54,7 +54,7 @@
     <input type="file" accept=".json" id="filePush" />
 
     <!-- RETRIVE ALLOCATION BUTTON -->
-    <button id="retrieve" type="button">Import JSON</button>
+    <button class="bigbutton_class" id="retrieve" type="button">Import JSON</button>
   </form>
 
   <!-- VISUALIZATION -->
@@ -106,7 +106,7 @@
         <fieldset class="subnetEntries_class">
           <legend>
             Subnets
-            <input type="button" value="+ Add" class="smallbutton_class" id="modalAddSubnetButton_id" />
+            <input class="smallbutton_class" id="modalAddSubnetButton_id" type="button" value="+ Add" />
           </legend>
 
           <div class="modalSubnetBlock">
@@ -116,7 +116,7 @@
         </fieldset>
 
         <!-- ACTION BUTTONS -->
-        <button type="submit" id="modalSubnetApplyButton_id">
+        <button class="bigbutton_class" id="modalSubnetApplyButton_id" type="submit">
           Calculate Nested Subnets
         </button>
       </form>
