@@ -162,7 +162,7 @@ legend {
 }
 
 .removeBtn:hover {
-  background-color: #c9302c;
+  filter: brightness(85%);
 }
 
 #visualization {
@@ -274,6 +274,12 @@ legend {
   color: white;
   cursor: pointer;
 }
+
+/* Close button */
+#closeModalBtn:hover {
+  filter: brightness(85%);
+}
+
 
 
 /* makes the nested subnets scrollable  */
