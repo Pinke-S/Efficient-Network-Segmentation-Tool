@@ -119,12 +119,12 @@ legend {
 /* Name input grows */
 .modalSubnetRow input[type="text"] {
   flex: 1;
-  width: 80%;
+  width: 70%;
 }
 
 /* Hosts input */
 .modalSubnetRow input[type="number"] {
-  width: 10%;
+  width: 20%;
 }
 
 #fileUpload {
