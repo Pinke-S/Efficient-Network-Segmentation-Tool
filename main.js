@@ -29,13 +29,13 @@ function updateModal(network) {
 
   // removes subnet entries
   document.querySelector("#modalVisualization").innerHTML = "";
-  document.querySelectorAll(".modalSubnetRow").forEach((e) => { e.remove(); });
+  document.querySelectorAll("#modalSubnetRow").forEach((e) => { e.remove(); });
 
   // Adding pre exsisting subnets
   if (network.subnets.length) {
     for (let i = 0; i < network.subnets.length; i++) {
       if (network.subnets[i].name !== "free") {
-        let { row, nameInput, hostInput, removeBtn } = addSubnetRow(modalSubnetBlock, "modalSubnetRow");
+        let { row, nameInput, hostInput, removeBtn } = addSubnetRow(modalSubnetBlock, "subnetRow", "modalSubnetRow");
         nameInput.value = network.subnets[i].name;
         hostInput.value = network.subnets[i].getTotalAvailableHosts();
       }
@@ -44,9 +44,11 @@ function updateModal(network) {
   }
 }
 
-function addSubnetRow(Parent, rowClass) {
+function addSubnetRow(Parent, rowClass, rowID) {
   const row = document.createElement("div");
   row.classList.add(rowClass);
+  row.id = rowID;
+
 
   const nameInput = document.createElement("input");
   nameInput.type = "text";
@@ -91,7 +93,7 @@ const addButton = document.getElementById("addSubnetButton_id");
 const subnetContainer = document.querySelector(".subnetBlock");
 
 addButton.addEventListener("click", () => {
-  addSubnetRow(subnetContainer, "subnetRow");
+  addSubnetRow(subnetContainer, "subnetRow", "mainSubnetRow");
 });
 
 //  /* fjern row*/
@@ -123,17 +125,17 @@ closeModalBtn.addEventListener("click", () => {
 });
 
 backModalBtn.addEventListener("click", () => {
-    if (nestedSubnet.length <= 1) {
-        backModalBtn.style.visibility = "hidden";
-        return;
-    }
+  if (nestedSubnet.length <= 1) {
+    backModalBtn.style.visibility = "hidden";
+    return;
+  }
 
-    nestedSubnet.pop();
+  nestedSubnet.pop();
 
-    const previousSubnet = nestedSubnet[nestedSubnet.length - 1];
-    updateModal(previousSubnet);
+  const previousSubnet = nestedSubnet[nestedSubnet.length - 1];
+  updateModal(previousSubnet);
 
-    backModalBtn.style.visibility = nestedSubnet.length > 1 ? "visible" : "hidden";
+  backModalBtn.style.visibility = nestedSubnet.length > 1 ? "visible" : "hidden";
 });
 
 modalOverlay.addEventListener("click", (e) => {
@@ -144,53 +146,53 @@ modalOverlay.addEventListener("click", (e) => {
 });
 
 document.querySelector("#modalAddSubnetButton_id").addEventListener("click", () => {
-  addSubnetRow(modalSubnetBlock, "modalSubnetRow");
+  addSubnetRow(modalSubnetBlock, "subnetRow", "modalSubnetRow");
 })
 
 document.querySelector("#modalSubnetForm").addEventListener("submit", (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!nestedSubnet.length) return;
+  if (!nestedSubnet.length) return;
 
-    try {
-        const parentSubnet = nestedSubnet[nestedSubnet.length - 1];
+  try {
+    const parentSubnet = nestedSubnet[nestedSubnet.length - 1];
 
-        validateNestedSubnetAllocation(
-            parentSubnet,
-            document.querySelector(".modalSubnetBlock"),
-            ".modalSubnetRow"
-        );
+    validateNestedSubnetAllocation(
+      parentSubnet,
+      document.querySelector(".modalSubnetBlock"),
+      "#modalSubnetRow"
+    );
 
-        parentSubnet.subnets = [];
+    parentSubnet.subnets = [];
 
-        const parsedSubnets = getFormRows(
-            document.querySelector(".modalSubnetBlock"),
-            ".modalSubnetRow"
-        );
+    const parsedSubnets = getFormRows(
+      document.querySelector(".modalSubnetBlock"),
+      "#modalSubnetRow"
+    );
 
-        sortAllocationRequest(parsedSubnets);
+    sortAllocationRequest(parsedSubnets);
 
-        parsedSubnets.forEach((subnet) => {
-            const childSubnet = new ipAddress();
-            childSubnet.name = subnet.name;
-            childSubnet.prefix = subnet.prefix;
-            parentSubnet.subnets.push(childSubnet);
-        });
+    parsedSubnets.forEach((subnet) => {
+      const childSubnet = new ipAddress();
+      childSubnet.name = subnet.name;
+      childSubnet.prefix = subnet.prefix;
+      parentSubnet.subnets.push(childSubnet);
+    });
 
-        allocateAddresses(parentSubnet);
+    allocateAddresses(parentSubnet);
 
-        renderVisualization(
-            document.querySelector("#modalVisualization"),
-            parentSubnet.getTotalAddresses(),
-            parentSubnet.subnets
-        );
+    renderVisualization(
+      document.querySelector("#modalVisualization"),
+      parentSubnet.getTotalAddresses(),
+      parentSubnet.subnets
+    );
 
-        console.log("Nested subnet allocation updated:", parentSubnet);
+    console.log("Nested subnet allocation updated:", parentSubnet);
 
-    } catch (err) {
-        console.error(err);
-        alert(err.message);
-    }
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
 });
 
 /* submit form til backend */
@@ -208,7 +210,7 @@ form.addEventListener("submit", (e) => {
     const isp = new ipAddress();
     isp.ipAddressFromString(IPInput);
 
-    const subnets = getFormRows(subnetContainer, ".subnetRow");
+    const subnets = getFormRows(subnetContainer, "#mainSubnetRow");
     sortAllocationRequest(subnets);
 
     subnets.forEach((subnet) => {
@@ -288,7 +290,7 @@ retrieveBtn.addEventListener("click", async () => {
   const IPInput = document.getElementById("ipInput_id");
   IPInput.value = reconstructedISP.getNetworkAddress();
 
-  document.querySelectorAll(".subnetRow").forEach((e) => {
+  document.querySelectorAll("#mainSubnetRow").forEach((e) => {
     e.remove();
   });
 
@@ -297,7 +299,7 @@ retrieveBtn.addEventListener("click", async () => {
       return;
 
 
-    const { row, nameInput, hostInput, removeBtn } = addSubnetRow(subnetContainer, "subnetRow");
+    const { row, nameInput, hostInput, removeBtn } = addSubnetRow(subnetContainer, "subnetRow", "mainSubnetRow");
     nameInput.value = subnet.name;
     hostInput.value = subnet.getTotalAvailableHosts();
   });
@@ -410,33 +412,32 @@ function getRandomColor(colorsUsed) {
 /* nested subnets */
 
 function validateNestedSubnetAllocation(parentSubnet, rowsContainer, rowClass) {
-    const rows = rowsContainer.querySelectorAll(rowClass);
+  const rows = rowsContainer.querySelectorAll(rowClass);
 
-    if (rows.length === 0) {
-        throw new Error("No nested subnet rows provided");
+  if (rows.length === 0) {
+    throw new Error("No nested subnet rows provided");
+  }
+
+  let totalRequired = 0;
+
+  rows.forEach(row => {
+    const name = row.querySelector('[name="subnet"]').value.trim();
+    const hosts = Number(row.querySelector('[name="hosts"]').value);
+
+    if (!name) {
+      throw new Error("Nested subnet is missing a name");
     }
 
-    let totalRequired = 0;
-
-    rows.forEach(row => {
-        const name = row.querySelector('[name="subnet"]').value.trim();
-        const hosts = Number(row.querySelector('[name="hosts"]').value);
-
-        if (!name) {
-            throw new Error("Nested subnet is missing a name");
-        }
-
-        if (!hosts || hosts < 1) {
-            throw new Error("Nested subnet has invalid host requirement");
-        }
-
-        totalRequired += getNextPowerOfTwo(hosts);
-    });
-
-    if (totalRequired > parentSubnet.getTotalAddresses()) {
-        throw new Error("Nested subnets exceed the selected parent subnet size");
+    if (!hosts || hosts < 1) {
+      throw new Error("Nested subnet has invalid host requirement");
     }
 
-    return true;
+    totalRequired += getNextPowerOfTwo(hosts);
+  });
+
+  if (totalRequired > parentSubnet.getTotalAddresses()) {
+    throw new Error("Nested subnets exceed the selected parent subnet size");
+  }
+
+  return true;
 }
-
